@@ -15,9 +15,11 @@ AC_PROG_CC
 
 dnl check libraries
 AC_CHECK_LIB([cunit], 
-	[CU_initialize_registry], 
-	[AS_BOX([CUnit is installed])], 
-	[AC_MSG_ERROR([The library cunit is missing!])])
+	[CU_initialize_registry])
+dnl	[AS_BOX([CUnit is installed])], 
+dnl	[AC_MSG_ERROR([The library cunit is missing!])])
+
+dnl check functions
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 
