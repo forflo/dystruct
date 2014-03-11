@@ -10,7 +10,7 @@
 	Param: t = Datatype
 		offset = o
 	Return: Number of padding bytes */
-int calc_padding(int t, int offset){
+static int calc_padding(int t, int offset){
 	switch(t){
 		case DYN_S_INT:
 			return   (DYN_S_AL_INT - (offset % DYN_S_AL_INT)) % 
