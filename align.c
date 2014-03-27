@@ -62,18 +62,21 @@ int dstru_add_member(int *rc, int t, void *c, struct dyn_struct *ds){
 
 	switch(t){
 		case DYN_S_INT:
+			/* Calculates the new size for the dynamic structure */
 			new_size = ds->size + calc_padding(t, ds->size) + sizeof(int);
 
+			/* Enlarges buffer properly */
 			ds->buffer = (void *) realloc(ds->buffer, new_size); 
 			if (ds->buffer == NULL){
 				*rc = DYN_S_RC_MEMERR;
 				return -1;
 			}
+			/* update the dyn_struct object */
 			ds->size = new_size;
 			ds->elements++;
-			/* Memory has been allocated at this point */
-			/* Copy data from c to the buffer */
-			/* Can be understood as.
+			/* Memory has been allocated at this point 
+				Copy data from c to the buffer 
+			 	Can be understood as.
 				1) Get startaddress (new_size - sizeof(int) = number of padding
 				2) Cast the address appropriate
 				3) Copy the castet content of c into the memory */
