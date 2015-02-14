@@ -38,9 +38,18 @@ struct dyn_struct {
 #define DYN_S_AL_VOIDP 8
 /* Funktion prototypes */
 
-/* Adds a member of given Type */
+/* Dispatcher function */
 int dstru_add_member(int *rc, int type, void *c, struct dyn_struct *ds);
+
+/* Adds a member to a dynamic structure without respection correct alignment
+	Param: *rc: Returncodes from this function
+		t: The members type
+		c: The members data
+		ds: A Pointer to an initialized Struct	
+	Return: 0 on success
+		-1 on failure*/
 int dstru_add_member_packed(int *rc, int type, void *c, struct dyn_struct *ds);
+
 /* Adds a member to a dynamic structure while maintaining the correct alignment 
 	Param: *rc: Returncodes from this function
 		t: The members type
@@ -49,7 +58,8 @@ int dstru_add_member_packed(int *rc, int type, void *c, struct dyn_struct *ds);
 	Return: 0 on success
 		-1 on failure*/
 int dstru_add_member_aligned(int *rc, int type, void *c, struct dyn_struct *ds);
-/* Convenience functions */
+
+/* For convenience. All these function use dstru_add_member internally */ 
 int dstru_add_int(int *rc, int i, struct dyn_struct *ds);
 int dstru_add_short(int *rc, short i, struct dyn_struct *ds);
 int dstru_add_double(int *rc, double d, struct dyn_struct *ds);
