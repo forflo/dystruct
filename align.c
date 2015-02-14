@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-
 /* caluclates the number of required padding bytes
 	between a given offset and the start address
 	using the following formula
@@ -39,15 +37,178 @@ static int calc_padding(int t, int offset){
 	}	
 }
 
+int dstru_add_member(int *rc, int t, void *content, struct dyn_struct *dest){
+	switch(dest->option){
+		case DYN_FLAG_PACKED:
+			return dstru_add_member_packed(rc, t, content, dest);
+			break;
+		case DYN_FLAG_NONE:
+			return dstru_add_member_aligned(rc, t, content, dest);
+			break;
+		default:
+			return -1;
+			break;
+	}
+}
 
-/* Adds a member to a dynamic structure while maintaining the correct alignment 
-	Param: *rc: Returncodes from this function
-		t: The members type
-		c: The members data
-		ds: A Pointer to an initialized Struct	
-	Return: 0 on success
-		-1 on failure*/
-int dstru_add_member(int *rc, int t, void *c, struct dyn_struct *ds){
+int dstru_add_member_packed(int *rc, int t, void *c, struct dyn_struct *ds){
+	int old_size = ds->size;
+	int new_size;
+
+	int *tempI; char *tempC;
+	double *tempD; float *tempF;
+	long *tempL; short *tempS;
+	void *tempV;
+
+	if(ds == NULL || c == NULL){
+		if(!(rc == NULL))
+			*rc = DYN_S_RC_PARAM;
+		return -1;	
+	}
+
+	switch(t){
+		case DYN_S_STRUCT:
+			/* calculates the new size */
+			new_size = ds->size + (((struct dyn_struct *)c)->size);
+
+			ds->buffer = (void *) realloc(ds->buffer, new_size);
+			if(ds->buffer == NULL){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+
+			ds->size = new_size;
+			ds->elements++;
+
+			/* copies the field into the own buffer */
+			if(!memcpy(ds->buffer + old_size, ((struct dyn_struct *)c)->buffer, 
+						((struct dyn_struct *)c)->size)){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+
+			break;
+		case DYN_S_UINT32:
+			/* Calculates the new size for the dynamic structure */
+			new_size = ds->size + sizeof(uint32_t);
+
+			/* Enlarges buffer properly */
+			ds->buffer = (void *) realloc(ds->buffer, new_size); 
+			if (ds->buffer == NULL){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+			/* update the dyn_struct object */
+			ds->size = new_size;
+			ds->elements++;
+			/* Memory has been allocated at this point 
+				Copy data from c to the buffer 
+			 	Can be understood as.
+				1) Get startaddress (new_size - sizeof(int) = number of padding
+				2) Cast the address appropriate
+				3) Copy the castet content of c into the memory */
+			*((int *) (ds->buffer + old_size)) = *((int *) c);
+			break;
+		case DYN_S_UINT8:
+			new_size = ds->size + sizeof(uint8_t);
+
+			ds->buffer = (void *) realloc(ds->buffer, new_size); 
+			if (ds->buffer == NULL){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+
+			ds->size = new_size;
+			ds->elements++;
+
+			/* Memory has been allocated at this point */
+			*((char *) (ds->buffer + old_size)) = *((char *) c);
+			break;
+		case DYN_S_UINT16:
+			new_size = ds->size + sizeof(uint16_t);
+
+			ds->buffer = (void *) realloc(ds->buffer, new_size); 
+			if (ds->buffer == NULL){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+
+			ds->size = new_size;
+			ds->elements++;
+			/* Memory has been allocated at this point */
+			*((short *) (ds->buffer + old_size )) = *((short *) c);
+			break;
+		case DYN_S_UINT64:
+			new_size = ds->size + sizeof(uint64_t);
+
+			ds->buffer = (void *) realloc(ds->buffer, new_size); 
+			if (ds->buffer == NULL){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+
+			ds->size = new_size;
+			ds->elements++;
+			/* Memory has been allocated at this point */
+			*((long *) (ds->buffer + old_size)) = *((long *) c);
+			break;
+		case DYN_S_FLOAT:
+			new_size = ds->size + sizeof(float);
+
+			ds->buffer = (void *) realloc(ds->buffer, new_size); 
+			if (ds->buffer == NULL){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+
+			ds->size = new_size;
+			ds->elements++;
+			/* Memory has been allocated at this point */
+			*((float *) (ds->buffer + old_size )) = *((float *) c);
+			break;
+		case DYN_S_DOUBLE:
+			new_size = ds->size + sizeof(double);
+
+			ds->buffer = (void *) realloc(ds->buffer, new_size); 
+			if (ds->buffer == NULL){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+
+			ds->size = new_size;
+			ds->elements++;
+			/* Memory has been allocated at this point */
+			*((double *) (ds->buffer + old_size )) = *((double *) c);
+			break;
+		case DYN_S_VOIDP:
+			new_size = ds->size + sizeof(void *);
+
+			ds->buffer = (void *) realloc(ds->buffer, new_size); 
+			if (ds->buffer == NULL){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+
+			ds->size = new_size;
+			ds->elements++;
+
+			/* The tricky bit */
+			char *tempv = ds->buffer + (new_size - sizeof(void *));
+			char *tempp = (char *) &c;
+			int i;
+			for (i=0; i< sizeof(void *); i++){
+				tempv[i] = tempp[i];
+			}
+			//*((void *) (ds->buffer + (new_size - sizeof(void *)))) = c;
+			break;
+		default:
+			return -1;
+			break;	
+	}	
+	return 0;
+}
+
+int dstru_add_member_aligned(int *rc, int t, void *c, struct dyn_struct *ds){
 	int new_size;
 	int *tempI;
 	char *tempC;

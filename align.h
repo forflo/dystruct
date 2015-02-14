@@ -1,7 +1,9 @@
 #include <stdint.h>
+#include <stdbool.h>
 
 struct dyn_struct {
 	uint8_t *buffer;
+	int option;
 	int size;
 	int elements;
 };
@@ -10,6 +12,11 @@ struct dyn_struct {
 #define DYN_S_RC_MEMERR 101
 #define DYN_S_RC_PARAM 102
 #define DYN_S_RC_SUCCS 103
+
+/* FSLAGS all are mutually exclusive */
+#define DYN_FLAG_NONE 0
+#define DYN_FLAG_PACKED 1
+#define DYN_FLAG_FOO 2
 
 /* Defines */
 #define DYN_S_UINT8 1001
@@ -33,6 +40,15 @@ struct dyn_struct {
 
 /* Adds a member of given Type */
 int dstru_add_member(int *rc, int type, void *c, struct dyn_struct *ds);
+int dstru_add_member_packed(int *rc, int type, void *c, struct dyn_struct *ds);
+/* Adds a member to a dynamic structure while maintaining the correct alignment 
+	Param: *rc: Returncodes from this function
+		t: The members type
+		c: The members data
+		ds: A Pointer to an initialized Struct	
+	Return: 0 on success
+		-1 on failure*/
+int dstru_add_member_aligned(int *rc, int type, void *c, struct dyn_struct *ds);
 /* Convenience functions */
 int dstru_add_int(int *rc, int i, struct dyn_struct *ds);
 int dstru_add_short(int *rc, short i, struct dyn_struct *ds);
