@@ -1,5 +1,7 @@
 #include "align.h"
 #include <stdlib.h>
+#include <string.h>
+
 
 
 /* caluclates the number of required padding bytes
@@ -12,17 +14,17 @@
 	Return: Number of padding bytes */
 static int calc_padding(int t, int offset){
 	switch(t){
-		case DYN_S_INT:
-			return   (DYN_S_AL_INT - (offset % DYN_S_AL_INT)) % 
-				DYN_S_AL_INT;
-		case DYN_S_CHAR:
+		case DYN_S_UINT8:
 			return  0;
-		case DYN_S_SHORT:
-			return   (DYN_S_AL_SHORT - (offset % DYN_S_AL_SHORT)) % 
-			DYN_S_AL_SHORT;
-		case DYN_S_LONG:
-			return   (DYN_S_AL_LONG - (offset % DYN_S_AL_LONG)) % 
-			DYN_S_AL_LONG;
+		case DYN_S_UINT16:
+			return   (DYN_S_AL_UINT16 - (offset % DYN_S_AL_UINT16)) % 
+			DYN_S_AL_UINT16;
+		case DYN_S_UINT32:
+			return   (DYN_S_AL_UINT32 - (offset % DYN_S_AL_UINT32)) % 
+				DYN_S_AL_UINT32;
+		case DYN_S_UINT64:
+			return   (DYN_S_AL_UINT64 - (offset % DYN_S_AL_UINT64)) % 
+			DYN_S_AL_UINT64;
 		case DYN_S_FLOAT:
 			return   (DYN_S_AL_FLOAT - (offset % DYN_S_AL_FLOAT)) % 
 			DYN_S_AL_FLOAT;
@@ -36,6 +38,7 @@ static int calc_padding(int t, int offset){
 			return -1;
 	}	
 }
+
 
 /* Adds a member to a dynamic structure while maintaining the correct alignment 
 	Param: *rc: Returncodes from this function
@@ -61,7 +64,30 @@ int dstru_add_member(int *rc, int t, void *c, struct dyn_struct *ds){
 	}
 
 	switch(t){
-		case DYN_S_INT:
+		case DYN_S_STRUCT:
+			/* calculates the new size */
+			new_size = ds->size + 
+				(((struct dyn_struct *) c)->size - (ds->size % ((struct dyn_struct *) c)->size))
+				+ ((struct dyn_struct *) c)->size;
+
+			ds->buffer = (void *) realloc(ds->buffer, new_size);
+			if(ds->buffer == NULL){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+
+			ds->size = new_size;
+			ds->elements++;
+
+			/* copies the field into the own buffer */
+			if(!memcpy(ds->buffer + (new_size - ((struct dyn_struct *)c)->size),
+					((struct dyn_struct *)c)->buffer, ((struct dyn_struct *)c)->size)){
+				*rc = DYN_S_RC_MEMERR;
+				return -1;
+			}
+
+			break;
+		case DYN_S_UINT32:
 			/* Calculates the new size for the dynamic structure */
 			new_size = ds->size + calc_padding(t, ds->size) + sizeof(int);
 
@@ -82,7 +108,7 @@ int dstru_add_member(int *rc, int t, void *c, struct dyn_struct *ds){
 				3) Copy the castet content of c into the memory */
 			*((int *) (ds->buffer + (new_size - sizeof(int)))) = *((int *) c);
 			break;
-		case DYN_S_CHAR:
+		case DYN_S_UINT8:
 			new_size = ds->size + calc_padding(t, ds->size) + sizeof(char);
 
 			ds->buffer = (void *) realloc(ds->buffer, new_size); 
@@ -95,7 +121,7 @@ int dstru_add_member(int *rc, int t, void *c, struct dyn_struct *ds){
 			/* Memory has been allocated at this point */
 			*((char *) (ds->buffer + (new_size - sizeof(char)))) = *((char *) c);
 			break;
-		case DYN_S_SHORT:
+		case DYN_S_UINT16:
 			new_size = ds->size + calc_padding(t, ds->size) + sizeof(short);
 
 			ds->buffer = (void *) realloc(ds->buffer, new_size); 
@@ -108,7 +134,7 @@ int dstru_add_member(int *rc, int t, void *c, struct dyn_struct *ds){
 			/* Memory has been allocated at this point */
 			*((short *) (ds->buffer + (new_size - sizeof(short)))) = *((short *) c);
 			break;
-		case DYN_S_LONG:
+		case DYN_S_UINT64:
 			new_size = ds->size + calc_padding(t, ds->size) + sizeof(long);
 
 			ds->buffer = (void *) realloc(ds->buffer, new_size); 
@@ -181,7 +207,7 @@ int dstru_add_int(int *rc, int i, struct dyn_struct *ds){
 	int *temp = (int *) malloc(sizeof(int));
 	int ret;
 	*temp = i;
-	ret = dstru_add_member(rc, DYN_S_INT, (void *) temp, ds);
+	ret = dstru_add_member(rc, DYN_S_UINT32, (void *) temp, ds);
 	free(temp);
 	return ret; 
 }
@@ -190,7 +216,7 @@ int dstru_add_short(int *rc, short i, struct dyn_struct *ds){
 	short *temp =  (short *) malloc(sizeof(short));
 	int ret;
 	*temp = i;
-	ret = dstru_add_member(rc, DYN_S_SHORT, (void *) temp, ds);
+	ret = dstru_add_member(rc, DYN_S_UINT16, (void *) temp, ds);
 	free(temp);
 	return ret; 
 }
@@ -217,7 +243,7 @@ int dstru_add_char(int *rc, char c, struct dyn_struct *ds){
 	char *temp = (char *) malloc(sizeof(char));
 	int ret;
 	*temp = c;
-	ret = dstru_add_member(rc, DYN_S_CHAR, (void *) temp, ds);	
+	ret = dstru_add_member(rc, DYN_S_UINT8, (void *) temp, ds);	
 	free(temp);
 	return ret;
 }
@@ -230,9 +256,13 @@ int dstru_add_long(int *rc, long l, struct dyn_struct *ds){
 	long *temp = (long *) malloc(sizeof(long));
 	int ret;
 	*temp = l;
-	ret = dstru_add_member(rc, DYN_S_LONG, (long *) temp, ds);	
+	ret = dstru_add_member(rc, DYN_S_UINT64, (long *) temp, ds);	
 	free(temp);
 	return ret;
+}
+
+int dstru_add_bitfield(int *rc, struct dyn_struct *source, struct dyn_struct *dest){
+	return dstru_add_member(rc, DYN_S_STRUCT, source, dest);
 }
 
 /* Returns a newly initialized dyn_struct object 
