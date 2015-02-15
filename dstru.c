@@ -7,6 +7,18 @@
 #include "dstru_types.h"
 #include "config.h"
 
+static const int TYPE_LOOKUP[] = {
+	0, 
+	DYN_S_UINT8, 
+	DYN_S_UINT16, 
+	0, 
+	DYN_S_UINT32, 
+	0, 
+	0, 
+	0, 
+	DYN_S_UINT64
+}; 
+
 static int is_power_of_two(int t){
 	return ((t != 0) && !(t & (t - 1)));
 }
@@ -69,7 +81,23 @@ int dstru_padding(int type, struct dstru_struct *s){
 	}
 }
 
-//TODO: biggest_member!!
+/* adds final padding to the buffer of dest */
+int dstru_finalize(struct dstru_struct *dest){
+	int new_size;
+	if ((!is_power_of_two(dest->align) && (dest->align != 0)) || dest == NULL)
+		return 1;
+
+	new_size = dest->size + dstru_padding(TYPE_LOOKUP[dest->biggest_member], dest);
+
+	dest->buffer = realloc(dest->buffer, new_size);
+	if(dest->buffer == NULL)
+		return 1;
+
+	dest->size = new_size;
+	
+	return 0;
+}
+
 int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 	int pad_size, new_size;
 	uint8_t *tempv, *tempp;
@@ -92,6 +120,12 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 
 	dest->size = new_size;
 	dest->elem_num++;
+
+	/* update the biggest_member field if the new field 
+	 	will be bigger than every other field before (dest->buffer) */
+	if (dest->biggest_member < dstru_sizeof(type,content)){
+		dest->biggest_member = dstru_sizeof(type,content);
+	}
 
 	/* type dependent adding logic */
 	switch(type){
@@ -191,6 +225,7 @@ int dstru_init(int align, struct dstru_struct **s){
 	ret->size = 0;
 	ret->elem_num = 0;
 	ret->align = 0;
+	ret->biggest_member = 0;
 
 	*s = ret;
 

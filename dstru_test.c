@@ -77,11 +77,15 @@ void test_struct(void){
 	CU_ASSERT(dstru_add_member(DYN_S_UINT8, (void *) &c1, ds1) == 0);
 	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) &i1, ds1) == 0);	
 	CU_ASSERT(dstru_add_member(DYN_S_UINT16, (void *) &s1, ds1) == 0);
+	CU_ASSERT(dstru_finalize(ds1) == 0);
 	
 	/* ds1 => instance of the test2 structure*/	
 	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) &i2, ds2) == 0);
 	CU_ASSERT(dstru_add_member(DYN_S_DOUBLE, (void *) &d, ds2) == 0);	
 	CU_ASSERT(dstru_add_member(DYN_S_UINT8, (void *) &c2, ds2) == 0);
+	CU_ASSERT(dstru_finalize(ds2) == 0);
+
+
 
 	ts1 = (struct test1 *) ds1->buffer;
 	ts2 = (struct test2 *) ds2->buffer;
