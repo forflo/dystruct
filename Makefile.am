@@ -1,6 +1,4 @@
 check_PROGRAMS = testamd64
-testamd64_SOURCES = test.c
+testamd64_SOURCES = test.c dystru.c
 
-lib_LTLIBRARIES = libdystruct.la
-libdystruct_la_SOURCES = align.c
-include_HEADERS = align.h
+include_HEADERS = dstru_funcs.h dstru_defines.h dstru_types.h

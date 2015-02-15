@@ -1,7 +1,10 @@
-#include <CUnit/Cunit.h>
+#include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 #include <stdlib.h>
-#include "align.h"
+#include <stdint.h>
+#include "dstru_funcs.h"
+#include "dstru_defines.h"
+#include "dstru_types.h"
 #include "config.h"
 
 /***************
@@ -36,21 +39,22 @@ struct voip{
 
 /* creation and destruction test */
 void test_dyn_str(void){
-	struct dyn_struct *ds = dstru_init();
+	struct dstru_struct *ds;
+	CU_ASSERT(dstru_init(0, &ds) == 0);
 	CU_ASSERT(ds != NULL);
 	CU_ASSERT(ds->buffer == NULL);
-	CU_ASSERT(ds->size == 0 && ds->elements == 0);
+	CU_ASSERT(ds->size == 0 && ds->elem_num == 0);
 	dstru_free(ds);
 }
 
 /* Test the special case of adding a void pointer
 	to a dynamic strucutre */
 void test_voidp(void){
-	struct dyn_struct *ds = dstru_init();
-	int *rc = (int *) malloc(sizeof(int));
+	struct dstru_struct *ds;
+	CU_ASSERT(dstru_init(0, &ds) == 0);
 	CU_ASSERT(ds != NULL);
 	int *i = (int *) malloc(sizeof(int));
-	dstru_add_member(rc, DYN_S_VOIDP, (void *) i, ds);	
+	dstru_add_member(DYN_S_VOIDP, (void *) i, ds);	
 	
 	struct voip *v = (struct voip *) ds->buffer;
 	CU_ASSERT(v->a == i);
@@ -61,8 +65,10 @@ void test_voidp(void){
 	contained by the dystructs is then casted to a pointer
 	with type of one of above specified abstract data types */
 void test_struct(void){
-	struct dyn_struct *ds1 = dstru_init();
-	struct dyn_struct *ds2 = dstru_init();
+	struct dstru_struct *ds1; 
+	CU_ASSERT(dstru_init(0, &ds1) == 0);
+	struct dstru_struct *ds2;
+	CU_ASSERT(dstru_init(0, &ds2) == 0);
 	int *i1 = (int *) malloc(sizeof(int)), 
 		*i2 = (int *) malloc(sizeof(int)),
 		*rc = (int *) malloc(sizeof(int));
@@ -85,14 +91,14 @@ void test_struct(void){
 	*c2 = 'F';
 	
 	/* ds2 => instance of the test2 structure */
-	dstru_add_member(rc, DYN_S_CHAR, (void *) c1, ds1);
-	dstru_add_member(rc, DYN_S_INT, (void *) i1, ds1);	
-	dstru_add_member(rc, DYN_S_SHORT, (void *) s1, ds1);
+	CU_ASSERT(dstru_add_member(DYN_S_UINT8, (void *) c1, ds1) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) i1, ds1) == 0);	
+	CU_ASSERT(dstru_add_member(DYN_S_UINT16, (void *) s1, ds1) == 0);
 	
 	/* ds1 => instance of the test2 structure*/	
-	dstru_add_member(rc, DYN_S_INT, (void *) i2, ds2);
-	dstru_add_member(rc, DYN_S_DOUBLE, (void *) d, ds2);	
-	dstru_add_member(rc, DYN_S_CHAR, (void *) c2, ds2);
+	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) i2, ds2) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_DOUBLE, (void *) d, ds2) == 0);	
+	CU_ASSERT(dstru_add_member(DYN_S_UINT8, (void *) c2, ds2) == 0);
 
 	struct test1 *ts1 = (struct test1 *) ds1->buffer;
 	struct test2 *ts2 = (struct test2 *) ds2->buffer;
@@ -104,10 +110,18 @@ void test_struct(void){
 	CU_ASSERT(ts2->a == 100123);
 	CU_ASSERT(ts2->b == 100000.123123);
 	CU_ASSERT(ts2->c == 'F');
+
+	free(i1);
+	free(i2);
+	free(d);
+	free(s1);
+	free(c1);
+	free(c2);
 }
 
 void test_dummy(void){
-	struct dyn_struct *ds1 = dstru_init();
+	struct dstru_struct *ds1;
+   	CU_ASSERT(dstru_init(0, &ds1) == 0);
 	int *i1 = (int *) malloc(sizeof(int)), 
 		*i2 = (int *) malloc(sizeof(int)),
 		*rc = (int *) malloc(sizeof(int));
@@ -117,8 +131,8 @@ void test_dummy(void){
 
 	*i1 = 700;
 	*i2 = -700;
-	dstru_add_member(rc, DYN_S_INT, (void *) i1, ds1);
-	dstru_add_member(rc, DYN_S_INT, (void *) i2, ds1);
+	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) i1, ds1) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) i2, ds1) == 0);
 
 	struct test3 *t = (struct test3 *) ds1->buffer;
 	CU_ASSERT(t->a == 700);
@@ -127,24 +141,30 @@ void test_dummy(void){
 
 /* Tests whether the padding is calculated correctly */
 void test_padding(void){
+	struct dstru_struct *foo;
+	CU_ASSERT(dstru_init(0, &foo) == 0);
+
 	/* INT */
-	CU_ASSERT(calc_padding(DYN_S_INT, 0) == 0);
-	CU_ASSERT(calc_padding(DYN_S_INT, 1) == 3);
-	CU_ASSERT(calc_padding(DYN_S_INT, 2) == 2);
-	CU_ASSERT(calc_padding(DYN_S_INT, 3) == 1);
+	foo->size = 0;
+	CU_ASSERT(dstru_padding(DYN_S_UINT32, foo) == 0);
+	foo->size = 1;
+	CU_ASSERT(dstru_padding(DYN_S_UINT32, foo) == 3);
+	foo->size = 3;
+	CU_ASSERT(dstru_padding(DYN_S_UINT32, foo) == 2);
+	foo->size = 4;
+	CU_ASSERT(dstru_padding(DYN_S_UINT32, foo) == 1);
 	/* Short */
-	CU_ASSERT(calc_padding(DYN_S_SHORT, 1) == 1);
-	CU_ASSERT(calc_padding(DYN_S_SHORT, 2) == 0);
+
+	foo->size = 1;
+	CU_ASSERT(dstru_padding(DYN_S_UINT16, foo) == 1);
+	foo->size = 2;
+	CU_ASSERT(dstru_padding(DYN_S_UINT16, foo) == 0);
 	/* Char */	
-	CU_ASSERT(calc_padding(DYN_S_CHAR, 1) == 0);
-	CU_ASSERT(calc_padding(DYN_S_CHAR, 44) == 0);
+	CU_ASSERT(dstru_padding(DYN_S_UINT8, foo) == 0);
+	CU_ASSERT(dstru_padding(DYN_S_UINT8, foo) == 0);
 	/* voidpointer */
-	CU_ASSERT(calc_padding(DYN_S_VOIDP, 4) == 4);
-	CU_ASSERT(calc_padding(DYN_S_VOIDP, 0) == 0);
-	/* double */
-	CU_ASSERT(calc_padding(DYN_S_DOUBLE, 4) == 4);
-	CU_ASSERT(calc_padding(DYN_S_DOUBLE, 0) == 0);
-	CU_ASSERT(calc_padding(DYN_S_DOUBLE, 8) == 0);
+	foo->size = 4;
+	CU_ASSERT(dstru_padding(DYN_S_VOIDP, foo) == 4);
 }
 
 /* Required calls to CUnit. Test will be registered  */

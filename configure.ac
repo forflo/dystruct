@@ -1,7 +1,7 @@
 AC_PREREQ(2.59)
 
 dnl initialize systems
-AC_INIT([dystru], [0.1], [mayer.florian@web.de])
+AC_INIT([dynstruct], [0.1], [mayer.florian@web.de])
 AM_INIT_AUTOMAKE([1.9 gnu])
 LT_INIT dnl initialize libtool
 
@@ -16,8 +16,8 @@ AC_PROG_CC
 dnl check libraries
 AC_CHECK_LIB([cunit], 
 	[CU_initialize_registry])
-dnl	[AS_BOX([CUnit is installed])], 
-dnl	[AC_MSG_ERROR([The library cunit is missing!])])
+dnl [AS_BOX([CUnit is installed])], 
+dnl [AC_MSG_ERROR([The library cunit is missing!])])
 
 dnl check functions
 AC_FUNC_MALLOC
