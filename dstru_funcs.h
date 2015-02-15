@@ -12,6 +12,9 @@
 		-1 on failure*/
 int dstru_add_member(int type, void *content, struct dstru_struct *ds);
 
+/* fills the buffer with the required number of padding bytes */
+int dstru_finalize(struct dstru_struct *ds);
+
 /* For convenience. All these function use dstru_add_member internally */ 
 int dstru_add_uint8(uint8_t i, struct dstru_struct *ds);
 int dstru_add_uint16(uint16_t i, struct dstru_struct *ds);
@@ -28,5 +31,6 @@ int dstru_init(int align, struct dstru_struct **s);
 int dstru_free(struct dstru_struct *s);
 
 int dstru_padding(int type, struct dstru_struct *s);
+int dstru_sizeof(int type, struct dstru_struct *s);
 
 #endif

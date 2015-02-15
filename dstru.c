@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <stdint.h>
 #include "dstru_funcs.h"
@@ -39,7 +40,7 @@ int dstru_padding(int type, struct dstru_struct *s){
 		return 0; 
 	} else if (s->align >= 1){
 		return (s->align - (s->size % s->align)) % s->align;
-	/* no packing. Alignment follows the DYN_S_YL_* Defines*/
+	/* no packing. Alignment follows the DYN_S_AL_* Defines*/
 	} else {
 		switch(type){
 			case DYN_S_UINT8:
@@ -49,7 +50,7 @@ int dstru_padding(int type, struct dstru_struct *s){
 				DYN_S_AL_UINT16;
 			case DYN_S_UINT32:
 				return   (DYN_S_AL_UINT32 - (s->size % DYN_S_AL_UINT32)) % 
-					DYN_S_AL_UINT32;
+				DYN_S_AL_UINT32;
 			case DYN_S_UINT64:
 				return   (DYN_S_AL_UINT64 - (s->size % DYN_S_AL_UINT64)) % 
 				DYN_S_AL_UINT64;
@@ -68,29 +69,22 @@ int dstru_padding(int type, struct dstru_struct *s){
 	}
 }
 
+//TODO: biggest_member!!
 int dstru_add_member(int type, void *content, struct dstru_struct *dest){
-	int old_size = dest->size;
-	int new_size;
-
-	int *tempI; char *tempC;
-	double *tempD; float *tempF;
-	long *tempL; short *tempS;
-	void *tempV;
-
-	char *tempv;
-	char *tempp;
+	int pad_size, new_size;
+	uint8_t *tempv, *tempp;
 	int vi;
 
 	if (!is_power_of_two(dest->align) && (dest->align != 0))
 		return 1;
-	
 
 	if(dest == NULL || content == NULL){
 		return 1;	
 	}
 
-	/* adding logic */
+	/* element adding logic begins here */
 	new_size = dest->size + dstru_padding(type, dest) + dstru_sizeof(type, content);
+	pad_size = new_size - dstru_sizeof(type, content);
 
 	dest->buffer = realloc(dest->buffer, new_size);
 	if(dest->buffer == NULL)
@@ -103,7 +97,7 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 	switch(type){
 		case DYN_S_STRUCT:
 			/* copies the field into the own buffer */
-			if(!memcpy(dest->buffer + old_size, ((struct dstru_struct *)content)->buffer, 
+			if(!memcpy(((uint8_t *) dest->buffer) + pad_size, ((struct dstru_struct *)content)->buffer, 
 						((struct dstru_struct *)content)->size))
 				return 1;
 			break;
@@ -114,32 +108,32 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 				1) Get startaddress (new_size - sizeof(int) = number of padding
 				2) Cast the address appropriate
 				3) Copy the castet content of c into the memory */
-			*((uint32_t *) (dest->buffer + old_size)) = *((uint32_t *) content);
+			*((uint32_t *) (((uint8_t *) dest->buffer) + pad_size)) = *((uint32_t *) content);
 			break;
 		case DYN_S_UINT8:
 			/* Memory has been allocated at this point */
-			*((uint8_t *) (dest->buffer + old_size)) = *((uint8_t *) content);
+			*((uint8_t *) (((uint8_t *) dest->buffer) + pad_size)) = *((uint8_t *) content);
 			break;
 		case DYN_S_UINT16:
 			/* Memory has been allocated at this point */
-			*((uint16_t *) (dest->buffer + old_size )) = *((uint16_t *) content);
+			*((uint16_t *) (((uint8_t *) dest->buffer) + pad_size )) = *((uint16_t *) content);
 			break;
 		case DYN_S_UINT64:
 			/* Memory has been allocated at this point */
-			*((uint64_t *) (dest->buffer + old_size)) = *((uint64_t *) content);
+			*((uint64_t *) (((uint8_t *) dest->buffer) + pad_size)) = *((uint64_t *) content);
 			break;
 		case DYN_S_FLOAT:
 			/* Memory has been allocated at this point */
-			*((float *) (dest->buffer + old_size )) = *((float *) content);
+			*((float *) (((uint8_t *) dest->buffer) + pad_size )) = *((float *) content);
 			break;
 		case DYN_S_DOUBLE:
 			/* Memory has been allocated at this point */
-			*((double *) (dest->buffer + old_size )) = *((double *) content);
+			*((double *) (((uint8_t *) dest->buffer) + pad_size )) = *((double *) content);
 			break;
 		case DYN_S_VOIDP:
 			/* The tricky bit */
-			tempv = dest->buffer + (new_size - dstru_sizeof(type, content));
-			tempp = (char *) &content;
+			tempv = ((uint8_t *) dest->buffer) + (new_size - dstru_sizeof(type, content));
+			tempp = (uint8_t *) &content;
 			for (vi=0; vi< dstru_sizeof(type, content); vi++){
 				tempv[vi] = tempp[vi];
 			}
