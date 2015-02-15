@@ -85,10 +85,13 @@ void test_struct(void){
 	CU_ASSERT(dstru_add_member(DYN_S_UINT8, (void *) &c2, ds2) == 0);
 	CU_ASSERT(dstru_finalize(ds2) == 0);
 
-
-
 	ts1 = (struct test1 *) ds1->buffer;
 	ts2 = (struct test2 *) ds2->buffer;
+
+	/*printf("\n");*/
+	/*printf("Final Size ds1: %d ds2: %d\n", ds1->size, ds2->size);*/
+	/*printf("Size of original test1: %ld test2: %ld\n", */
+	/*sizeof(struct test1), sizeof(struct test2));*/
 
 	CU_ASSERT(ts1->a == c1);
 	CU_ASSERT(ts1->b == i1);
