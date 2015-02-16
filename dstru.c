@@ -37,26 +37,35 @@ int dstru_sizeof(int type, struct dstru_struct *content){
 	}
 }
 
-/* caluclates the number of required padding bytes
-	between a given offset and the start address
-	using the following formula
-	p = a - (o % a) % a, where p is the number of paddingbytes,
+/* Caluclates the number of required padding bytes
+	between the structures offset (s->size) and the start address
+	using the following formula: p = a - (o % a) % a, 
+	where p is the number of paddingbytes,
 	a is the alignment and o ist the initial address offset 
+	-------------------
 	Param: t = Datatype
-		offset = o
-	Return: Number of padding bytes */
+		s = instance of the structure
+	Return: Number of padding bytes 
+ 	Semantics: 
+		1) s->align can only be of the values {0, 1, 2, 4, 8, 16 ...}
+			no checks necessary since dstru_init already verfied, that 
+			s->align is a power of two.
+		2) type can only be the values DYN_S_* defined in dstru_defines.h */
 int dstru_padding(int type, struct dstru_struct *s){
-	/* Packing enabled. Use t as x in pack(x).
-	 	Alignment is t-bytes */
+	if (s == NULL || type < 0)
+		return 1;
+
+	/* Full structure packing enabled. No alignment! */
 	if(s->align == 1){
 		return 0; 
 	} else if (s->align >= 1){
 		return (s->align - (s->size % s->align)) % s->align;
-	/* no packing. Alignment follows the DYN_S_AL_* Defines*/
+	/* No packing. Alignment follows the DYN_S_AL_* defines*/
 	} else {
 		switch(type){
-			case DYN_S_UINT8:
-				return  0;
+
+			case DYN_S_UINT8: return  0;
+
 			case DYN_S_UINT16:
 				return   (DYN_S_AL_UINT16 - (s->size % DYN_S_AL_UINT16)) % 
 				DYN_S_AL_UINT16;
@@ -75,8 +84,7 @@ int dstru_padding(int type, struct dstru_struct *s){
 			case DYN_S_VOIDP:
 				return   (DYN_S_AL_VOIDP - (s->size % DYN_S_AL_VOIDP)) % 
 				DYN_S_AL_VOIDP;
-			default :
-				return -1;
+			default : return -1;
 		}	
 	}
 }
@@ -218,13 +226,13 @@ int dstru_add_bitfield(struct dstru_struct *source, struct dstru_struct *dest){
 	Return: Valid address != NULL on success, NULL on failure */
 int dstru_init(int align, struct dstru_struct **s){
 	struct dstru_struct *ret = malloc(sizeof(struct dstru_struct));
-	if (ret == NULL)
+	if (ret == NULL || align < 0 || (!is_power_of_two(align) && align != 0))
 		return 1;
 
 	ret->buffer = NULL;
 	ret->size = 0;
 	ret->elem_num = 0;
-	ret->align = 0;
+	ret->align = align;
 	ret->biggest_member = 0;
 
 	*s = ret;
