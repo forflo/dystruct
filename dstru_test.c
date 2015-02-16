@@ -2,37 +2,22 @@
 #include <CUnit/Basic.h>
 #include <stdlib.h>
 #include <stdint.h>
+
+#include "dstru_test_types.h"
+#include "dstru_test_funcs.h"
+
 #include "dstru_funcs.h"
 #include "dstru_defines.h"
 #include "dstru_types.h"
+
 #include "config.h"
 
 /* unused but required by CUnit */
-int init_test_dyn_str(void){ 
-	return 0; 
-}
-
-int clean_test_dyn_str(void){ 
-	return 0;
-}
-
-/* Structures used by test drivers */
-struct test { int a; short c;};
-
-struct test1 { char a; int b; short c; };
-
-struct test2 { int a; double b; char c; };
-
-struct test3 { int a; int b; };
-
-struct test_struct { 
-	int a; int b; short c; 
-	struct { double d1; short s; double d2;} foo; }; 
-
-struct voip { void *a; };
+int init_test_dyn_str(void){ return 0; }
+int clean_test_dyn_str(void){ return 0; }
 
 /* creation and destruction test */
-void test_dyn_str(void){
+void test_init(void){
 	struct dstru_struct *ds;
 	CU_ASSERT(dstru_init(0, &ds) == 0);
 	CU_ASSERT(ds != NULL);
@@ -46,22 +31,44 @@ void test_dyn_str(void){
 	to a dynamic strucutre */
 void test_voidp(void){
 	struct dstru_struct *ds;
-	struct voip *v;
+	struct flat_4 *v;
 	int *i = (int *) malloc(sizeof(int));
 
 	CU_ASSERT(dstru_init(0, &ds) == 0);
 	CU_ASSERT(ds != NULL);
-	dstru_add_member(DYN_S_VOIDP, (void *) i, ds);	
+	CU_ASSERT(dstru_add_member(DYN_S_VOIDP, (void *) i, ds) == 0);
 
-	v = (struct voip *) ds->buffer;
+	v = (struct flat_4 *) ds->buffer;
 	CU_ASSERT(v->a == i);
+
+	dstru_free(ds);
+	free(i);
+}
+
+void test_creation_normal1(void){
+	uint32_t i1 = 700;
+	uint32_t i2 = -700;
+
+	struct dstru_struct *ds1;
+	struct flat_1 *t;
+
+   	CU_ASSERT(dstru_init(0, &ds1) == 0);
+	CU_ASSERT(ds1 != NULL);
+
+	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) &i1, ds1) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) &i2, ds1) == 0);
+
+	t = (struct flat_1 *) ds1->buffer;
+
+	CU_ASSERT(t->a == i1);
+	CU_ASSERT(t->b == i2);
 }
 
 /* Main test. Creates different dynamic structures 
 	on the heap using the dstru_add_member function . The byte-Buffer
 	contained by the dystructs is then casted to a pointer
 	with type of one of above specified abstract data types */
-void test_struct(void){
+void test_creation_normal2(void){
 	uint32_t i1 = 100123, i2 = -100123;
 	double d = 100000.123123;
 	uint8_t c1 = 'F', c2 = '\n';
@@ -69,8 +76,8 @@ void test_struct(void){
 
 	struct dstru_struct *ds1; 
 	struct dstru_struct *ds2;
-	struct test1 *ts1;
-	struct test2 *ts2;
+	struct flat_3 *ts1;
+	struct flat_2 *ts2;
 
 	CU_ASSERT(dstru_init(0, &ds1) == 0);
 	CU_ASSERT(dstru_init(0, &ds2) == 0);
@@ -90,8 +97,8 @@ void test_struct(void){
 	CU_ASSERT(dstru_add_member(DYN_S_UINT8, (void *) &c2, ds2) == 0);
 	CU_ASSERT(dstru_finalize(ds2) == 0);
 
-	ts1 = (struct test1 *) ds1->buffer;
-	ts2 = (struct test2 *) ds2->buffer;
+	ts1 = (struct flat_3 *) ds1->buffer;
+	ts2 = (struct flat_2 *) ds2->buffer;
 
 	/*printf("\n");*/
 	/*printf("Final Size ds1: %d ds2: %d\n", ds1->size, ds2->size);*/
@@ -107,7 +114,7 @@ void test_struct(void){
 	CU_ASSERT(ts2->c == c2);
 }
 
-void test_struct_aligned(void){
+void test_creation_aligned(void){
 	uint32_t i1 = 100123, i2 = -100123;
 	double d = 100000.123123;
 	uint8_t c1 = 'F', c2 = '\n';
@@ -146,38 +153,33 @@ void test_struct_aligned(void){
 	CU_ASSERT(*((uint8_t *) ((uint8_t*) ds2->buffer + 12)) == c2);
 }
 
-void test_add_struct(void){
+void test_creation_nested(void){
 	uint32_t i1 = 42, i2 = 43;
 	uint16_t s1 = 500, s2 = -500;	
 	double d1 = 10000.123332, d2 = -299234.33433;
 
-	struct dstru_struct *source;
 	struct dstru_struct *dest;
-	struct test_struct *ts;
+	struct nested_1 *ts;
 
-	CU_ASSERT(dstru_init(0, &source) == 0);
 	CU_ASSERT(dstru_init(0, &dest) == 0);
 
 	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) &i1, dest) == 0);
 	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) &i2, dest) == 0);
 	CU_ASSERT(dstru_add_member(DYN_S_UINT16, (void *) &s1, dest) == 0);
 
-	CU_ASSERT(dstru_add_member(DYN_S_DOUBLE, (void *) &d1, source) == 0);
-	CU_ASSERT(dstru_add_member(DYN_S_UINT16, (void *) &s1, source) == 0);
-	CU_ASSERT(dstru_add_member(DYN_S_DOUBLE, (void *) &d2, source) == 0);
-	CU_ASSERT(dstru_finalize(source) == 0);
-
-	CU_ASSERT(dstru_add_member(DYN_S_STRUCT, source->buffer, dest) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_DOUBLE, (void *) &d1, dest) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_UINT16, (void *) &s2, dest) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_DOUBLE, (void *) &d2, dest) == 0);
 	CU_ASSERT(dstru_finalize(dest) == 0);
 
-	ts = (struct test_struct *) dest->buffer;
+	ts = (struct nested_1 *) dest->buffer;
 
 	CU_ASSERT(ts->a == i1);
 	CU_ASSERT(ts->b == i2);
 	CU_ASSERT(ts->c == s1);
-	CU_ASSERT(ts->foo.d1 == d1);
-	CU_ASSERT(ts->foo.d2 == d2);
-	CU_ASSERT(ts->foo.s == s2);
+	CU_ASSERT(ts->anon.d1 == d1);
+	CU_ASSERT(ts->anon.s == (uint16_t) s2);
+	CU_ASSERT(ts->anon.d2 == d2);
 }
 
 void test_sizeof(void){
@@ -188,27 +190,8 @@ void test_sizeof(void){
 	CU_ASSERT(dstru_sizeof(DYN_S_DOUBLE, NULL) == sizeof(double)); 
 }
 
-void test_dummy(void){
-	uint32_t i1 = 700;
-	uint32_t i2 = -700;
-
-	struct dstru_struct *ds1;
-	struct test3 *t;
-
-   	CU_ASSERT(dstru_init(0, &ds1) == 0);
-	CU_ASSERT(ds1 != NULL);
-
-	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) &i1, ds1) == 0);
-	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) &i2, ds1) == 0);
-
-	t = (struct test3 *) ds1->buffer;
-
-	CU_ASSERT(t->a == i1);
-	CU_ASSERT(t->b == i2);
-}
-
 /* Tests whether the padding is calculated correctly */
-void test_padding(void){
+void test_padding_normal(void){
 	struct dstru_struct *foo;
 	CU_ASSERT(dstru_init(0, &foo) == 0);
 
@@ -283,11 +266,12 @@ int main(int argc, char **argv){
 	/* Initialize and build a Testsuite */
 	CU_pSuite pSuite = NULL;
 
+
 	if (CUE_SUCCESS != CU_initialize_registry())
 		return CU_get_error();
 
 	/* Creation of the main test suite */
-	pSuite = CU_add_suite("Dynamische C-Strukturen", init_test_dyn_str, 
+	pSuite = CU_add_suite("Dynamic C-Heap Structures", init_test_dyn_str, 
 							clean_test_dyn_str); 
 	if (NULL == pSuite){
 		CU_cleanup_registry();
@@ -295,25 +279,34 @@ int main(int argc, char **argv){
 	}
 
 	/* Adds tests */
-	if((NULL == CU_add_test(pSuite, "Struktur erzeugen", test_dyn_str)) || 
-		(NULL == CU_add_test(pSuite, "Member hinzufügen", test_dummy)) ||	
-		(NULL == CU_add_test(pSuite, "Voller Test", test_struct)) || 
-		(NULL == CU_add_test(pSuite, "Voidpointer Test", test_voidp)) || 
-		(NULL == CU_add_test(pSuite, "Sizeof Test", test_sizeof)) ||
+	if((NULL == CU_add_test(pSuite, "Creation of structs", test_init)) || 
+		(NULL == CU_add_test(pSuite, "Voidpointer test", test_voidp)) || 
+		(NULL == CU_add_test(pSuite, "Sizeof test", test_sizeof)) ||
+		(NULL == CU_add_test(pSuite, "Member adding test 1", test_creation_normal1)) ||	
+		(NULL == CU_add_test(pSuite, "Member adding test 2", test_creation_normal2)) || 
 		(NULL == CU_add_test(pSuite, 
-				"Voller Test mit Alignment 2 und 4", 
-				test_struct_aligned)) ||
-		(NULL == CU_add_test(pSuite, 
-				"Padding berechnen mit Alignment 1, 2 und 4", 
-				test_padding_aligned)) ||
+				"Member adding test with alignment", 
+				test_creation_aligned)) ||
 		(NULL == CU_add_test(pSuite,
-				"Struktur erzeugen und anderer als Member hinzufügen",
-				test_add_struct)) ||
-		(NULL == CU_add_test(pSuite, "Padding berechnen", test_padding))){
-
+				"Member adding test with nested structs",
+				test_creation_nested)) ||
+		(NULL == CU_add_test(pSuite, 
+				"Padding test with alignment", 
+				test_padding_aligned)) ||
+		(NULL == CU_add_test(pSuite, 
+				"Padding test with platform alignment", 
+				test_padding_normal)))
+	{
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
+
+	printf("\nSome sizeof considerations...\n");
+	printf("sizeof(nested_1) :%ld\n", sizeof(struct nested_1));
+	printf("sizeof(nested_2) :%ld\n", sizeof(struct nested_2));
+	printf("sizeof(nested_3) :%ld\n", sizeof(struct nested_3));
+	printf("sizeof(nested_3_part_1) :%ld\n", sizeof(struct nested_3_part_1));
+	printf("sizeof(nested_3_part_2) :%ld\n", sizeof(struct nested_3_part_2));
 
 	/* misc configuration */
 	CU_basic_set_mode(CU_BRM_VERBOSE);
@@ -321,4 +314,3 @@ int main(int argc, char **argv){
 	CU_cleanup_registry();
 	return CU_get_error();
 }
-

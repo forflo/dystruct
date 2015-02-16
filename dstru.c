@@ -2,26 +2,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+
 #include "dstru_funcs.h"
 #include "dstru_defines.h"
 #include "dstru_types.h"
+
+#include "dstru_util_funcs.h"
+
 #include "config.h"
-
-static const int TYPE_LOOKUP[] = {
-	0, 
-	DYN_S_UINT8, 
-	DYN_S_UINT16, 
-	0, 
-	DYN_S_UINT32, 
-	0, 
-	0, 
-	0, 
-	DYN_S_UINT64
-}; 
-
-static int is_power_of_two(int t){
-	return ((t != 0) && !(t & (t - 1)));
-}
 
 int dstru_sizeof(int type, struct dstru_struct *content){
 	switch(type){
@@ -63,9 +51,8 @@ int dstru_padding(int type, struct dstru_struct *s){
 	/* No packing. Alignment follows the DYN_S_AL_* defines*/
 	} else {
 		switch(type){
-
 			case DYN_S_UINT8: return  0;
-
+			case DYN_S_STRUCT:
 			case DYN_S_UINT16:
 				return   (DYN_S_AL_UINT16 - (s->size % DYN_S_AL_UINT16)) % 
 				DYN_S_AL_UINT16;
@@ -92,16 +79,21 @@ int dstru_padding(int type, struct dstru_struct *s){
 /* adds final padding to the buffer of dest */
 int dstru_finalize(struct dstru_struct *dest){
 	int new_size;
-	if ((!is_power_of_two(dest->align) && (dest->align != 0)) || dest == NULL)
+	if ((!dstru_is_power_of_two(dest->align) 
+			&& (dest->align != 0)) || dest == NULL)
 		return 1;
 
-	new_size = dest->size + dstru_padding(TYPE_LOOKUP[dest->biggest_member], dest);
+	if (dest->biggest_member > 8){
+;	
+	} else {
+		new_size = dest->size + 
+			dstru_padding(dstru_lookup_type(dest->biggest_member), dest);
+	}
 
+	dest->size = new_size;
 	dest->buffer = realloc(dest->buffer, new_size);
 	if(dest->buffer == NULL)
 		return 1;
-
-	dest->size = new_size;
 	
 	return 0;
 }
@@ -111,7 +103,7 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 	uint8_t *tempv, *tempp;
 	int vi;
 
-	if (!is_power_of_two(dest->align) && (dest->align != 0))
+	if (!dstru_is_power_of_two(dest->align) && (dest->align != 0))
 		return 1;
 
 	if(dest == NULL || content == NULL){
@@ -139,7 +131,8 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 	switch(type){
 		case DYN_S_STRUCT:
 			/* copies the field into the own buffer */
-			if(!memcpy(((uint8_t *) dest->buffer) + pad_size, ((struct dstru_struct *)content)->buffer, 
+			if(!memcpy(((uint8_t *) dest->buffer) + pad_size, 
+						((struct dstru_struct *)content)->buffer, 
 						((struct dstru_struct *)content)->size))
 				return 1;
 			break;
@@ -226,7 +219,7 @@ int dstru_add_bitfield(struct dstru_struct *source, struct dstru_struct *dest){
 	Return: Valid address != NULL on success, NULL on failure */
 int dstru_init(int align, struct dstru_struct **s){
 	struct dstru_struct *ret = malloc(sizeof(struct dstru_struct));
-	if (ret == NULL || align < 0 || (!is_power_of_two(align) && align != 0))
+	if (ret == NULL || align < 0 || (!dstru_is_power_of_two(align) && align != 0))
 		return 1;
 
 	ret->buffer = NULL;
