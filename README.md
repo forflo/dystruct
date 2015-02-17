@@ -1,3 +1,6 @@
+Dystruct
+========
+
 Abstract
 --------
 Dystruct is a little C-Library that lets you easily build your own
@@ -11,3 +14,11 @@ members.
 Installation
 -----------
 Just follow the instructions in INSTALL
+
+Development
+-----------
+After a fresh checkout of the repository, just execute the following command.
+
+    $ autoreconf --install
+
+This will prepare the build system for you usage.
