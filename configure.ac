@@ -1,7 +1,7 @@
-AC_PREREQ(2.59)
+AC_PREREQ(2.69)
 
 dnl initialize systems
-AC_INIT([dynstruct], [0.1], [mayer.florian@web.de])
+AC_INIT([dynstruct], [0.3], [mayerflorian@me.com])
 AM_INIT_AUTOMAKE([1.9 gnu])
 LT_INIT dnl initialize libtool
 
