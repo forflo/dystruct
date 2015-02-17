@@ -1,2 +1,7 @@
 2014-02-17 Florian Mayer <mayer.florian@web.de>
 * Initial commit
+2015-2-13 Florian Mayer <mayer.florian@web.de>
+* Cleaner code
+* Working unit tests
+* Cleaner repo
+* Refactored build system
