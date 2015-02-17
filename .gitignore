@@ -16,3 +16,6 @@ missing
 test*
 config*
 ltmain.sh
+stamp-h1
+libtool
+Makefile
