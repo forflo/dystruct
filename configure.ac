@@ -47,19 +47,13 @@ AC_SUBST([ac_foofoo], [mooo])
 
 
 AC_CHECK_HEADER([CUnit/CUnit.h],
-	[
-		AC_DEFINE([CUINT_K1], [1], [CUnit/CUnit.h])
-	], 
-	[
-		have_cunit_k1=no
-	])
+	[AC_DEFINE([CUINT_K1], [1], [CUnit/CUnit.h])], 
+	[have_cunit_k1=no])
 
 AC_CHECK_HEADER([CUnit/Cunit.h],
-	[AC_DEFINE([CUINT_K2], [1], [CUnit/Cunit.h])
-	], 
-	[
-		have_cunit_k2=no
-	])
+	[AC_DEFINE([CUINT_K2], [1], 
+	[CUnit/Cunit.h])], 
+	[have_cunit_k2=no])
 
 if test "x${have_cunit_k1}" = xno; then
 	if test "x${have_cunit_k2}" = xno; then
@@ -68,72 +62,57 @@ if test "x${have_cunit_k1}" = xno; then
 fi
 
 AC_CHECK_HEADER([CUnit/Basic.h],
-	[ AC_DEFINE([CUNIT_BASIC], [1], [CUnit/Basic.h])
-	],[ AC_MSG_ERROR([$CUNIT_BASIC_NOTF], [1])
-	])
+	[AC_DEFINE([CUNIT_BASIC], [1], [CUnit/Basic.h])],
+	[AC_MSG_ERROR([$CUNIT_BASIC_NOTF], [1])])
 
 dnl Adds various commandline options
 dnl to the resulting configure script
 AC_ARG_ENABLE([uint8-align],
-	[AS_HELP_STRING([--with-uint8-align=<integer>], [custom uint8 alignment])], 
-		[AC_DEFINE_UNQUOTED([DSTRU_UINT_8_AL], 
-			[${withval}], 
-			[UINT8 alignment adjustment])],
+	[AS_HELP_STRING([--enable-uint8-align=<integer>], 
+		[custom uint8 alignment])], 
+	[AC_DEFINE_UNQUOTED([DSTRU_UINT_8_AL], 
+		[${enableval}], 
+		[UINT8 alignment adjustment])],
 	[])
 
 AC_ARG_ENABLE([uint16-align],
-	[AS_HELP_STRING([--with-uint16-align=<integer>], [custom uint16 alignment])], 
-		[AC_DEFINE_UNQUOTED([DSTRU_UINT_16_AL], 
-			[${withval}], 
-			[UINT16 alignment adjustment])
-
-		 AC_DEFINE([DSTRU_CUSTOM_ALIGN], 
-			[1], 
-			[Custom Alignment])],
+	[AS_HELP_STRING([--enable-uint16-align=<integer>], 
+		[custom uint16 alignment])], 
+	[AC_DEFINE_UNQUOTED([DSTRU_UINT_16_AL], 
+		[${enableval}], 
+		[UINT16 alignment adjustment])],
 	[])
 
 AC_ARG_ENABLE([uint32-align],
-	[AS_HELP_STRING([--with-uint32-align=<integer>], [custom uint32 alignment])], 
-		[AC_DEFINE_UNQUOTED([DSTRU_UINT_32_AL], 
-			[${withval}], 
-			[UINT32 alignment adjustment])
-
-		 AC_DEFINE([DSTRU_CUSTOM_ALIGN], 
-			[1], 
-			[Custom Alignment])],
+	[AS_HELP_STRING([--enable-uint32-align=<integer>], 
+		[custom uint32 alignment])], 
+	[AC_DEFINE_UNQUOTED([DSTRU_UINT_32_AL], 
+		[${enableval}], 
+		[UINT32 alignment adjustment])],
 	[])
 
 AC_ARG_ENABLE([uint64-align],
-	[AS_HELP_STRING([--with-uint64-align=<integer>], [custom uint64 alignment])], 
-		[AC_DEFINE_UNQUOTED([DSTRU_UINT_64_AL], 
-			[${withval}], 
-			[UINT64 alignment adjustment])
-
-		 AC_DEFINE([DSTRU_CUSTOM_ALIGN], 
-			[1], 
-			[Custom Alignment])],
+	[AS_HELP_STRING([--enable-uint64-align=<integer>], 
+		[custom uint64 alignment])], 
+	[AC_DEFINE_UNQUOTED([DSTRU_UINT_64_AL], 
+		[${enableval}], 
+		[UINT64 alignment adjustment])],
 	[])
 
 AC_ARG_ENABLE([double-align],
-	[AS_HELP_STRING([--with-double-align=<integer>], [custom double alignment])], 
-		[AC_DEFINE_UNQUOTED([DSTRU_DOUBLE_AL], 
-			[${withval}], 
-			[DOUBLE alignment adjustment])
-
-		 AC_DEFINE([DSTRU_CUSTOM_ALIGN], 
-			[1], 
-			[Custom Alignment])],
+	[AS_HELP_STRING([--enable-double-align=<integer>], 
+		[custom double alignment])], 
+	[AC_DEFINE_UNQUOTED([DSTRU_DOUBLE_AL], 
+		[${enableval}], 
+		[DOUBLE alignment adjustment])],
 	[])
 
 AC_ARG_ENABLE([float-align],
-	[AS_HELP_STRING([--with-float-align=<integer>], [custom float alignment])], 
-		[AC_DEFINE_UNQUOTED([DSTRU_DOUBLE_AL], 
-			[${withval}], 
-			[FLOAT alignment adjustment])
-
-		 AC_DEFINE([DSTRU_CUSTOM_ALIGN], 
-			[1], 
-			[Custom Alignment])],
+	[AS_HELP_STRING([--enable-float-align=<integer>], 
+		[custom float alignment])], 
+	[AC_DEFINE_UNQUOTED([DSTRU_FLOAT_AL], 
+		[${enableval}], 
+		[FLOAT alignment adjustment])],
 	[])
 
 dnl check for types
