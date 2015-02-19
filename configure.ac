@@ -2,6 +2,8 @@ AC_PREREQ(2.69)
 
 dnl initialize systems
 AC_INIT([dynstruct], [0.3], [mayerflorian@me.com])
+LT_INIT
+AM_INIT_AUTOMAKE
 
 ##
 # Some custom helper vars
@@ -42,8 +44,6 @@ fi
 
 dnl check headers
 AC_CHECK_HEADERS([stdio.h stdlib.h])
-
-AC_SUBST([ac_foofoo], [mooo])
 
 
 AC_CHECK_HEADER([CUnit/CUnit.h],
@@ -127,6 +127,23 @@ AC_FUNC_REALLOC
 
 dnl configuration actions
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile:Makefile.in])
+dnl specifies the .in Files to process 
+AC_CONFIG_FILES([Makefile:Makefile.in
+	src/Makefile:src/Makefile.in
+	test/Makefile:test/Makefile.in
+	])
 
 AC_OUTPUT
+
+AC_MSG_NOTICE([
+
+Summary:
+--------
+${PACKAGE_NAME} Version ${PACKAGE_VERSION}
+
+Prefix: ${prefix}.
+Compiler: ${CC} ${CFLAGS} ${CPPFLAGS}
+
+Now type: 
+$ make && make install
+])

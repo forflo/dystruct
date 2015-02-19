@@ -1,4 +1,9 @@
-check_PROGRAMS = testamd64
-testamd64_SOURCES = test.c dystru.c
+SUBDIRS = src test
 
-include_HEADERS = dstru_funcs.h dstru_defines.h dstru_types.h
+TESTS = dstru_test
+
+dstru_test:
+	echo Make will now test the 
+	echo library dstru
+	$(top_srcdir)/test/./dstru_test
+
