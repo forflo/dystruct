@@ -13,7 +13,23 @@ members.
 
 Installation
 -----------
-Just follow the instructions in INSTALL
+The configure script provides the following additional
+command line options.
+
+* --enable-uint8-align=<integer> 
+* --enable-uint16-align=<integer>
+* --enable-uint32-align=<integer>
+* --enable-uint64-align=<integer>
+* --enable-double-align=<integer>
+* --enable-float-align=<integer> 
+
+With these options you can adjust the platform
+specific alignment requirements for the host you'll be using
+the library. Notice that you should only use powers of two
+as value for <integer>!
+
+Build system
+============
 
 Development
 -----------
@@ -23,8 +39,8 @@ After a fresh checkout of the repository, just execute the following command.
 
 This will prepare the build system for you usage.
 
-Notice
-------
+Silent make rules
+-----------------
 If you rather appreciate silence (or more silence)
 build processes, you can run the configure script 
 as follows:
@@ -32,6 +48,6 @@ as follows:
     $ ./configure --enable-silent-rules
 
 While this not completely silences the build -
-make will still output change directory messages -
-almost all of the commands executed by make rules
+make will still output cd messages -
+most of the commands executed by make rules
 won't be shown anymore.

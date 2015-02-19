@@ -3,7 +3,10 @@ AC_PREREQ(2.69)
 dnl initialize systems
 AC_INIT([dynstruct], [0.3], [mayerflorian@me.com])
 LT_INIT
-AM_INIT_AUTOMAKE
+
+dnl Automake makro invocations
+AM_INIT_AUTOMAKE([silent-rules])
+AM_SILENT_RULES
 
 ##
 # Some custom helper vars
