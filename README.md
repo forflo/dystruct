@@ -11,8 +11,8 @@ dynamically called function (with libffi), you'll have to build them on the heap
 library does just that while taking care of the correct alignment requirements of the 
 members. 
 
-Installation
------------
+Configuration
+-------------
 The configure script provides the following additional
 command line options.
 
@@ -28,6 +28,14 @@ With these options you can adjust the platform
 specific alignment requirements for the host you'll be using
 the library. Notice that you should only use powers of two
 as values for [integer]!
+
+Installation
+------------
+Just use these commands:
+
+    $ ./configure [option=value] ...
+    $ make && make check
+    $ make install
 
 Build system
 ============
@@ -48,7 +56,5 @@ as follows:
 
     $ ./configure --enable-silent-rules
 
-While this does not completely silence the build,
--- make will still output cd messages --
-most of the commands executed by make rules
-won't be shown anymore. 
+While this does not completely silence the build, most of the commands executed by make rules
+won't be shown anymore. Make will still output cd messages, though.
