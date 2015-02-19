@@ -16,12 +16,12 @@ Installation
 The configure script provides the following additional
 command line options.
 
-* --enable-uint8-align=<integer> 
-* --enable-uint16-align=<integer>
-* --enable-uint32-align=<integer>
-* --enable-uint64-align=<integer>
-* --enable-double-align=<integer>
-* --enable-float-align=<integer> 
+* --enable-uint8-align=[integer] 
+* --enable-uint16-align=[integer]
+* --enable-uint32-align=[integer]
+* --enable-uint64-align=[integer]
+* --enable-double-align=[integer]
+* --enable-float-align=[integer] 
 
 With these options you can adjust the platform
 specific alignment requirements for the host you'll be using
