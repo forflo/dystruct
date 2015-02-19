@@ -118,6 +118,14 @@ AC_ARG_ENABLE([float-align],
 		[FLOAT alignment adjustment])],
 	[])
 
+AC_ARG_ENABLE([ptr-align],
+	[AS_HELP_STRING([--enable-ptr-align=<integer>], 
+		[custom voidpointer alignment])], 
+	[AC_DEFINE_UNQUOTED([DSTRU_PTR_AL], 
+		[${enableval}], 
+		[PTR alignment adjustment])],
+	[])
+
 dnl check for types
 AC_TYPE_UINT8_T
 AC_TYPE_UINT16_T
@@ -129,7 +137,7 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 
 dnl configuration actions
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([config/config.h])
 dnl specifies the .in Files to process 
 AC_CONFIG_FILES([Makefile:Makefile.in
 	src/Makefile:src/Makefile.in

@@ -1,4 +1,4 @@
 SUBDIRS = src test
 
-TESTS = test/dstru_test
+TESTS = test/dstrutest
 

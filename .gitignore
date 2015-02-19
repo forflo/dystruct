@@ -24,3 +24,4 @@ autoscan.log
 *.a
 *.log
 *.trs
+test/*

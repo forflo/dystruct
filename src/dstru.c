@@ -9,8 +9,6 @@
 
 #include "dstru_util_funcs.h"
 
-#include "config.h"
-
 int dstru_sizeof(int type, struct dstru_struct *content){
 	switch(type){
 		case DYN_S_UINT8 : return sizeof(uint8_t);

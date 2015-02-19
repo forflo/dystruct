@@ -312,6 +312,8 @@ int main(int argc, char **argv){
 		return CU_get_error();
 	}
 
+	printf("\n%d\n", DYN_S_AL_UINT16);
+
 	printf("\nSome sizeof considerations...\n");
 	printf("sizeof(nested_1) :%ld\n", sizeof(struct nested_1));
 	printf("sizeof(nested_2) :%ld\n", sizeof(struct nested_2));
@@ -321,7 +323,12 @@ int main(int argc, char **argv){
 
 	/* misc configuration */
 	CU_basic_set_mode(CU_BRM_VERBOSE);
-	CU_basic_run_tests();
+	CU_basic_run_suite(pSuite);
+
+	if (CU_get_number_of_tests_failed())
+		return EXIT_FAILURE;
+
 	CU_cleanup_registry();
+
 	return CU_get_error();
 }
