@@ -7,8 +7,8 @@ Dystruct is a little C-Library that lets you easily build your own
 C-Structures at runtime.
 
 If you, for example, don't know which kinds of structures you have to pass to a
-dynamically called function (libffi) , you have to build them on the heap at runtime. This
-Library does just that while taking care about the correct alignment of the 
+dynamically called function (with libffi), you'll have to build them on the heap at runtime. This
+library does just that while taking care about the correct alignment requirements of the 
 members. 
 
 Installation
@@ -26,7 +26,7 @@ command line options.
 With these options you can adjust the platform
 specific alignment requirements for the host you'll be using
 the library. Notice that you should only use powers of two
-as value for <integer>!
+as value for [integer]!
 
 Build system
 ============
