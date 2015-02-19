@@ -48,5 +48,5 @@ as follows:
 
     $ ./configure --enable-silent-rules
 
-While this does not completely silence the build, - make will still output cd messages - most of the commands executed by make rules
-won't be shown anymore. 
+While this does not completely silence the build, most of the commands executed by make rules
+won't be shown anymore. Make will still output cd messages, though.
