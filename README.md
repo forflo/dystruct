@@ -34,11 +34,11 @@ Build system
 
 Development
 -----------
-After a fresh checkout of the repository, just execute the following command.
+After a fresh checkout of the repository, just execute the following command:
 
     $ autoreconf --install
 
-This will prepare the build system for you usage.
+This will prepare the build system for your usage.
 
 Silent make rules
 -----------------
