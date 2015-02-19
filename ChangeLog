@@ -10,3 +10,4 @@
 2015-2-20 Florian Mayer <mayerflorian@me.com>
 * Established automake as primary Makefile generator
 * Working test suite ($ make check)
+* Configurable alignment requirement settings
