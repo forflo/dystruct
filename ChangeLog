@@ -7,3 +7,6 @@
 * Refactored build system
 2015-2-18 Florian Mayer <mayerflorian@me.com>
 * Resonable configure.ac
+2015-2-20 Florian Mayer <mayerflorian@me.com>
+* Established automake as primary Makefile generator
+* Working test suite ($ make check)
