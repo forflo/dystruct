@@ -11,9 +11,9 @@ configure
 depcomp
 install-sh
 missing
+test-driver
 .deps
 .*
-test*
 config*
 ltmain.sh
 stamp-h1
