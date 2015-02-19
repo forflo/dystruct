@@ -8,7 +8,7 @@ C-Structures at runtime.
 
 If you, for example, don't know which kinds of structures you have to pass to a
 dynamically called function (with libffi), you'll have to build them on the heap at runtime. This
-library does just that while taking care about the correct alignment requirements of the 
+library does just that while taking care of the correct alignment requirements of the 
 members. 
 
 Installation
@@ -27,7 +27,7 @@ command line options.
 With these options you can adjust the platform
 specific alignment requirements for the host you'll be using
 the library. Notice that you should only use powers of two
-as value for [integer]!
+as values for [integer]!
 
 Build system
 ============
@@ -42,13 +42,13 @@ This will prepare the build system for your usage.
 
 Silent make rules
 -----------------
-If you rather appreciate silence (or more silence)
+If you rather appreciate silent (or more silent)
 build processes, you can run the configure script 
 as follows:
 
     $ ./configure --enable-silent-rules
 
 While this does not completely silence the build,
-- make will still output cd messages -
+-- make will still output cd messages --
 most of the commands executed by make rules
 won't be shown anymore. 
