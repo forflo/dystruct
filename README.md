@@ -22,3 +22,16 @@ After a fresh checkout of the repository, just execute the following command.
     $ autoreconf --install
 
 This will prepare the build system for you usage.
+
+Notice
+------
+If you rather appreciate silence (or more silence)
+build processes, you can run the configure script 
+as follows:
+
+    $ ./configure --enable-silent-rules
+
+While this not completely silences the build -
+make will still output change directory messages -
+almost all of the commands executed by make rules
+won't be shown anymore.
