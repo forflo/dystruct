@@ -22,6 +22,7 @@ command line options.
 * --enable-uint64-align=[integer]
 * --enable-double-align=[integer]
 * --enable-float-align=[integer] 
+* --enable-ptr-align=[integer]
 
 With these options you can adjust the platform
 specific alignment requirements for the host you'll be using
