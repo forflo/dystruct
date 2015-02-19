@@ -41,7 +41,9 @@ This license differs slightly from the original MIT license.
 		-1 on failure*/
 int dstru_add_member(int type, void *content, struct dstru_struct *ds);
 
-/* fills the buffer with the required number of padding bytes */
+/* Fills the buffer with the required number of padding bytes 
+ 	Param: ds = instance of an dstru_struct structure
+ 	Return: 0 if successfull, 1 if not */
 int dstru_finalize(struct dstru_struct *ds);
 
 /* For convenience. All these function use dstru_add_member internally */ 
@@ -54,12 +56,37 @@ int dstru_add_double(double i, struct dstru_struct *ds);
 int dstru_add_voidp(void *i, struct dstru_struct *ds);
 int dstru_add_bitfield(struct dstru_struct *source, struct dstru_struct *dest);
 
-/* Initializes a dynamic structure */
+/* Returns a newly initialized dstru_struct object 
+	Param: aling = Alignment specs (see also #pragma pack(x))
+		s = The pointer address to use
+	Return: 0 on success, 1 on error */
 int dstru_init(int align, struct dstru_struct **s);
-/* Frees a dynamic structure */
+/* Frees a dynamic structure 
+ 	Param: s = Pointer to the structure to free
+	Return: 0 on success, 1 on error */
 int dstru_free(struct dstru_struct *s);
 
+/* Caluclates the number of required padding bytes
+	between the structures offset (s->size) and the start address
+	using the following formula: p = a - (o % a) % a, 
+	where p is the number of paddingbytes,
+	a is the alignment and o ist the initial address offset 
+	-------------------
+	Param: t = Datatype
+		s = instance of the structure
+	Return: Number of padding bytes 
+ 	Semantics: 
+		1) s->align can only be of the values {0, 1, 2, 4, 8, 16 ...}
+			no checks necessary since dstru_init already verfied, that 
+			s->align is a power of two.
+		2) type can only be the values DYN_S_* defined in dstru_defines.h */
 int dstru_padding(int type, struct dstru_struct *s);
+/* Helper function for dstru_add_member.
+ 	returns the size of a #defined type.
+	-----------------------------------
+ 	Param: type = Type as specified in dstru_defines.h
+ 		s = instance of an dstru_struct structrue 
+ 	Return: Number of bytes occupied by the type */
 int dstru_sizeof(int type, struct dstru_struct *s);
 
 #endif

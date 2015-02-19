@@ -51,20 +51,6 @@ int dstru_sizeof(int type, struct dstru_struct *content){
 	}
 }
 
-/* Caluclates the number of required padding bytes
-	between the structures offset (s->size) and the start address
-	using the following formula: p = a - (o % a) % a, 
-	where p is the number of paddingbytes,
-	a is the alignment and o ist the initial address offset 
-	-------------------
-	Param: t = Datatype
-		s = instance of the structure
-	Return: Number of padding bytes 
- 	Semantics: 
-		1) s->align can only be of the values {0, 1, 2, 4, 8, 16 ...}
-			no checks necessary since dstru_init already verfied, that 
-			s->align is a power of two.
-		2) type can only be the values DYN_S_* defined in dstru_defines.h */
 int dstru_padding(int type, struct dstru_struct *s){
 	if (s == NULL || type < 0)
 		return 1;
@@ -102,7 +88,6 @@ int dstru_padding(int type, struct dstru_struct *s){
 	}
 }
 
-/* adds final padding to the buffer of dest */
 int dstru_finalize(struct dstru_struct *dest){
 	int new_size;
 	if ((!dstru_is_power_of_two(dest->align) 
@@ -205,9 +190,6 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 	return 0;
 } 
 
-/* convenience funktions. 
-	These functions provide automatic freeing of 
-	needet dynamically allocated variables */
 int dstru_add_uint16(uint16_t i, struct dstru_struct *ds){
 	return dstru_add_member(DYN_S_UINT16, (void *) &i, ds);
 }
@@ -240,9 +222,6 @@ int dstru_add_bitfield(struct dstru_struct *source, struct dstru_struct *dest){
 	return dstru_add_member(DYN_S_STRUCT, source, dest);
 }
 
-/* Returns a newly initialized dstru_struct object 
-	Param: void 
-	Return: Valid address != NULL on success, NULL on failure */
 int dstru_init(int align, struct dstru_struct **s){
 	struct dstru_struct *ret = malloc(sizeof(struct dstru_struct));
 	if (ret == NULL || align < 0 || (!dstru_is_power_of_two(align) && align != 0))
@@ -259,10 +238,6 @@ int dstru_init(int align, struct dstru_struct **s){
 	return 0;
 }
 
-/* Destroys a given dstru_struct object 
-	Param: ds = Pointer to a valid memory address containing a structure
-		of type struct dstru_struct
-	Return: 0 on success, -1 on failure */
 int dstru_free(struct dstru_struct *s){
 	if (s == NULL)
 		return 1;
