@@ -221,6 +221,36 @@ void test_creation_nested(void){
 	CU_ASSERT(ts->anon.d2 == d2);
 }
 
+void test_creation_nested_2(void){
+	int cnt;
+	struct dstru_struct *dest;
+
+	/* Future member values */
+	uint32_t i1 = 42, i2 = 100;
+	uint16_t s1 = 3220, s2 = 123;	
+	double d1 = 424242.121212, d2 = 4711.332273;
+	uint8_t foo1[32];
+	uint32_t foo2[4];
+
+	for (cnt = 0; cnt < 32; cnt++)
+		foo1[cnt] = cnt + '0';
+
+	for (cnt = 0; cnt < 4; cnt++)
+		foo2[cnt] = cnt + 42;	
+
+	CU_ASSERT(dstru_init(0, &dest) == 0);
+
+	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) &i1, dest) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_UINT32, (void *) &i2, dest) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_UINT16, (void *) &s1, dest) == 0);
+
+	CU_ASSERT(dstru_add_member(DYN_S_DOUBLE, (void *) &d1, dest) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_UINT16, (void *) &s2, dest) == 0);
+	CU_ASSERT(dstru_add_member(DYN_S_DOUBLE, (void *) &d1, dest) == 0);
+
+	///CU_ASSERT(dstru_add_member(DYN_
+}
+
 void test_sizeof(void){
 	CU_ASSERT(dstru_sizeof(DYN_S_UINT64, NULL) == 8); 
 	CU_ASSERT(dstru_sizeof(DYN_S_UINT8, NULL) == 1); 
@@ -340,14 +370,13 @@ int main(int argc, char **argv){
 		return CU_get_error();
 	}
 
-	printf("\n%d\n", DYN_S_AL_UINT16);
-
 	printf("\nSome sizeof considerations...\n");
 	printf("sizeof(nested_1) :%ld\n", sizeof(struct nested_1));
 	printf("sizeof(nested_2) :%ld\n", sizeof(struct nested_2));
 	printf("sizeof(nested_3) :%ld\n", sizeof(struct nested_3));
 	printf("sizeof(nested_3_part_1) :%ld\n", sizeof(struct nested_3_part_1));
 	printf("sizeof(nested_3_part_2) :%ld\n", sizeof(struct nested_3_part_2));
+	printf("sizeof(nested_4) :%ld\n", sizeof(struct nested_4));
 
 	/* misc configuration */
 	CU_basic_set_mode(CU_BRM_VERBOSE);

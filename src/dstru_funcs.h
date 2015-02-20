@@ -54,7 +54,8 @@ int dstru_add_uint64(uint64_t i, struct dstru_struct *ds);
 int dstru_add_float(float i, struct dstru_struct *ds);
 int dstru_add_double(double i, struct dstru_struct *ds);
 int dstru_add_voidp(void *i, struct dstru_struct *ds);
-int dstru_add_bitfield(struct dstru_struct *source, struct dstru_struct *dest);
+int dstru_add_bytefield(int size, void *content, struct dstru_struct *dest);
+int dstru_add_array(int elem_num, int arr_elem_type, void *content, struct dstru_struct *dest);
 
 /* Returns a newly initialized dstru_struct object 
 	Param: aling = Alignment specs (see also #pragma pack(x))

@@ -51,5 +51,6 @@ void test_creation_normal1(void);
 void test_creation_normal2(void);
 void test_creation_aligned(void);
 void test_creation_nested(void);
+void test_creation_field(void);
 
 #endif

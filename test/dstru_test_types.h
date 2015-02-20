@@ -65,6 +65,25 @@ struct nested_1 {
 
 struct nested_2 {
 	struct { 
+		uint32_t a; 
+		uint32_t b; 
+		uint16_t c; 
+	} anon1; 
+
+	struct { 
+		double d1; 
+		uint16_t s; 
+		double d2; 
+	} anon2; 
+
+	struct { 
+		uint8_t string[32]; 
+		uint32_t arr[4]; 
+	} anon3;
+};
+
+struct nested_4 {
+	struct { 
 		int a; 
 		int b; 
 		short c; 
@@ -77,8 +96,8 @@ struct nested_2 {
 	} anon2; 
 
 	struct { 
-		uint8_t string[32]; 
-		int arr[4]; 
+		uint8_t string[7]; 
+		int arr[21]; 
 	} anon3;
 };
 

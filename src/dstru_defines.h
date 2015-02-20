@@ -45,6 +45,7 @@ This license differs slightly from the original MIT license.
 #define DYN_S_DOUBLE 1005
 #define DYN_S_VOIDP 1006
 #define DYN_S_STRUCT 1007
+#define DYN_S_FIELD 1008
 
 /* Alignment configuration */
 
@@ -90,6 +91,12 @@ This license differs slightly from the original MIT license.
 #	define DYN_S_AL_VOIDP 8
 #else
 #	define DYN_S_AL_VOIDP DSTRU_PTR_AL
+#endif
+
+#ifndef DSTRU_WORDSIZE
+#	define DYN_S_AL_WS 8
+#else
+#	define DYN_S_AL_WS 8
 #endif
 
 #endif /* DSTRU_DEFINES */
