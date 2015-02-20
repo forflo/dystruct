@@ -153,35 +153,43 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 				1) Get startaddress (new_size - sizeof(int) = number of padding
 				2) Cast the address appropriate
 				3) Copy the castet content of c into the memory */
-			*((uint32_t *) (((uint8_t *) dest->buffer) + pad_size)) = *((uint32_t *) content);
+			*((uint32_t *) (((uint8_t *) dest->buffer) + pad_size)) = 
+				*((uint32_t *) content);
 			break;
 		case DYN_S_UINT8:
 			/* Memory has been allocated at this point */
-			*((uint8_t *) (((uint8_t *) dest->buffer) + pad_size)) = *((uint8_t *) content);
+			*((uint8_t *) (((uint8_t *) dest->buffer) + pad_size)) = 
+				*((uint8_t *) content);
 			break;
 		case DYN_S_UINT16:
 			/* Memory has been allocated at this point */
-			*((uint16_t *) (((uint8_t *) dest->buffer) + pad_size )) = *((uint16_t *) content);
+			*((uint16_t *) (((uint8_t *) dest->buffer) + pad_size )) = 
+				*((uint16_t *) content);
 			break;
 		case DYN_S_UINT64:
 			/* Memory has been allocated at this point */
-			*((uint64_t *) (((uint8_t *) dest->buffer) + pad_size)) = *((uint64_t *) content);
+			*((uint64_t *) (((uint8_t *) dest->buffer) + pad_size)) = 
+				*((uint64_t *) content);
 			break;
 		case DYN_S_FLOAT:
 			/* Memory has been allocated at this point */
-			*((float *) (((uint8_t *) dest->buffer) + pad_size )) = *((float *) content);
+			*((float *) (((uint8_t *) dest->buffer) + pad_size )) = 
+				*((float *) content);
 			break;
 		case DYN_S_DOUBLE:
 			/* Memory has been allocated at this point */
-			*((double *) (((uint8_t *) dest->buffer) + pad_size )) = *((double *) content);
+			*((double *) (((uint8_t *) dest->buffer) + pad_size )) = 
+				*((double *) content);
 			break;
 		case DYN_S_VOIDP:
 			/* The tricky bit */
-			tempv = ((uint8_t *) dest->buffer) + (new_size - dstru_sizeof(type, content));
+			tempv = ((uint8_t *) dest->buffer) + 
+					(new_size - dstru_sizeof(type, content));
 			tempp = (uint8_t *) &content;
-			for (vi=0; vi< dstru_sizeof(type, content); vi++){
+
+			for (vi=0; vi< dstru_sizeof(type, content); vi++)
 				tempv[vi] = tempp[vi];
-			}
+
 			break;
 		default:
 			return 1;
