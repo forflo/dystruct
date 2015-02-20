@@ -36,13 +36,66 @@ The structure to which s points now lays on the heap and
 looks like this:
 
     Offset: 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 
-    --------+-----------+-----------+-----------------------+
-            |    42     |  padding  |    424242.424242      |
-    --------+-----------+-----------+-----------------------+
+           -+-----------+-----------+-----------------------+-
+           -|    42     |  padding  |    424242.424242      |-
+           -+-----------+-----------+-----------------------+-
     Offset: 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33
-    --------+--+--------+-----------+
-            |* |     padding        |
-    --------+--+--------+-----------+
+           -+--+--------+-----------+
+           -|* |     padding        |
+           -+--+--------+-----------+
+
+As you can see, the cells 4 to 7 contain meaningless bytes filling
+up the space between the member "a" and "b" of the recently defined structure "flat".
+This is because the primitive type double has an alignment requirement
+of 8, meaning that a double value can only start at an offset
+which is an multiple of 8. The reason for this behaviour is very simple:
+Performance! [see also](http://en.wikipedia.org/wiki/Data_structure_alignment)
+
+If the wordsize of an architecture is for example 8 bytes, you wouldn't
+want the value of a double type begin at offset 7 and end at 15, because
+this would force the processor to load two words (each one 8 bytes big) into some
+working registers. However, if all double values would be aligned to 8 bytes,
+every access to them could be done in just one cpu cycle.
+
+Ok, now I know some of the internal mechanisms of data structure alignment. But why
+do I need your software?
+A very good question!
+
+Consider the following scenario: 
+You are building an interpreter for a programming
+language that reads commands from the console and executes them as the user
+types [enter]. (Python is such a programming language). 
+Now you want to enable
+the users of you language to use native C-Functions. This is possible and there is even a library that
+enables you to load and call arbitrary functions at runtime, without compiling and linking
+against libraries which contain them. (libffi provides such functionality)
+While this would be sufficient for functions taking only values of primitive types, 
+you, the programmer of the interpreter, will run into some severe problems when it
+comes to functions taking merely a pointer to a structure laying on the heap.
+What do you do? You can't use C-Constructs like
+
+    strcut foo *f = malloc(...);
+    call_func(funcpointer, f);
+    
+because you don't have access to the structure definition and thus cannot
+rely on the compiler to do the things just right.
+
+This is the point when it comes to this little library.
+With it, the code above could be rewritten as follows:
+
+	uint32_t i1 = 42;
+    double d = 424242.424242;
+    uint8_t c1 = '*'
+
+    struct dstru_struct *ds1;
+    
+    dstru_add_member(DYN_S_UINT32, (void *) &i1, ds1);
+    dstru_add_member(DYN_S_DOUBLE, (void *) &d, ds1);
+    dstru_add_member(DYN_S_UINT8, (void *) &c1, ds1);
+    dstru_finalize(ds1) == 0);
+    
+ds1 contains a member named "buffer" which is just a memory field.
+This field now contains the exact same as the structure s in our first example.
 
 Configuration
 -------------
