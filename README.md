@@ -92,9 +92,9 @@ With it, the code above could be rewritten as follows:
 
     struct dstru_struct *ds1;
     
-    dstru_add_member(DYN_S_UINT32, (void *) &i1, ds1);
-    dstru_add_member(DYN_S_DOUBLE, (void *) &d, ds1);
-    dstru_add_member(DYN_S_UINT8, (void *) &c1, ds1);
+    dstru_add_uint32(DYN_S_UINT32, (void *) &i1, ds1);
+    dstru_add_double(DYN_S_DOUBLE, (void *) &d, ds1);
+    dstru_add_uint8(DYN_S_UINT8, (void *) &c1, ds1);
     dstru_finalize(ds1) == 0;
     
 ds1 contains a member named "buffer", which is just a memory field.
