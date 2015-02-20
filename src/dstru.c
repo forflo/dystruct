@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 ----------------------------------------------------------------------------
-This license differs slightly from the original MIT license.
+This license slightly differs from the original MIT license.
 
 * Sublicensing is not allowed.
 * Alteration of the packages license is not allowed.

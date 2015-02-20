@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 ----------------------------------------------------------------------------
-This license differs slightly from the original MIT license.
+This license slightly differs from the original MIT license.
 
 * Sublicensing is not allowed.
 * Alteration of the packages license is not allowed.
@@ -31,12 +31,7 @@ This license differs slightly from the original MIT license.
 
 #include "config.h"
 
-/* Returncodes */
-#define DYN_S_RC_MEMERR 101
-#define DYN_S_RC_PARAM 102
-#define DYN_S_RC_SUCCS 103
-
-/* Defines */
+/* Wrapper types */
 #define DYN_S_UINT8 1001
 #define DYN_S_UINT16 1002
 #define DYN_S_UINT32 1000
