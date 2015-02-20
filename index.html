@@ -133,7 +133,7 @@ struct dstru_struct *ds1;
 dstru_add_member(DYN_S_UINT32, (void *) &amp;i1, ds1);
 dstru_add_member(DYN_S_DOUBLE, (void *) &amp;d, ds1);
 dstru_add_member(DYN_S_UINT8, (void *) &amp;c1, ds1);
-dstru_finalize(ds1) == 0);
+dstru_finalize(ds1) == 0;
 </code></pre>
 
 <p>ds1 contains a member named "buffer", which is just a memory field.
