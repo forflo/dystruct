@@ -225,8 +225,6 @@ int dstru_add_array(int num, int arr_member_type,
 		void *content, struct dstru_struct *dest){
 	int i;
 
-	printf("num: %d, arr_member_type: %d", num, arr_member_type);
-
 	if (!dstru_is_power_of_two(dest->align) 
 		&& (dest->align != 0) 
 		|| dest == NULL 
