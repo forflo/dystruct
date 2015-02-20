@@ -36,9 +36,9 @@ The structure s pointing to now lays on the heap and
 looks like this:
 
     Offset: 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 
-           -+-----------+-----------+-----------------------+-
-           -|    42     |  padding  |    424242.424242      |-
-           -+-----------+-----------+-----------------------+-
+            +-----------+-----------+-----------------------+-
+            |    42     |  padding  |    424242.424242      |-
+            +-----------+-----------+-----------------------+-
     Offset: 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33
            -+--+--------+-----------+
            -|* |     padding        |
@@ -54,7 +54,7 @@ Performance!
 If the wordsize of an architecture is, for example, 8 bytes, you wouldn't
 want the value of a double type begin at offset 7 and end at 15, because
 this would force the processor to load two words (each one 8 bytes big) into some
-working registers. However, if all double values would be properly aligned,
+working registers. However, if all double values were properly aligned,
 every access to them could be done in just one cpu cycle.
 [see also](http://en.wikipedia.org/wiki/Data_structure_alignment)
 
@@ -98,8 +98,8 @@ With it, the code above could be rewritten as follows:
     dstru_finalize(ds1) == 0;
     
 ds1 contains a member named "buffer", which is just a memory field.
-This field now contains the exact same as the initialized 
-structure s in our first example including both padding byte sections.
+This field now contains the exact same data as the initialized 
+structure s in our first example, including both padding byte sections.
 
 Configuration
 -------------
