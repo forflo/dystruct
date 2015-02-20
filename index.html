@@ -72,9 +72,9 @@ int do_sth(void){
 looks like this:</p>
 
 <pre><code>Offset: 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 
-       -+-----------+-----------+-----------------------+-
-       -|    42     |  padding  |    424242.424242      |-
-       -+-----------+-----------+-----------------------+-
+        +-----------+-----------+-----------------------+-
+        |    42     |  padding  |    424242.424242      |-
+        +-----------+-----------+-----------------------+-
 Offset: 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33
        -+--+--------+-----------+
        -|* |     padding        |
@@ -91,7 +91,7 @@ Performance! </p>
 <p>If the wordsize of an architecture is, for example, 8 bytes, you wouldn't
 want the value of a double type begin at offset 7 and end at 15, because
 this would force the processor to load two words (each one 8 bytes big) into some
-working registers. However, if all double values would be properly aligned,
+working registers. However, if all double values were properly aligned,
 every access to them could be done in just one cpu cycle.
 <a href="http://en.wikipedia.org/wiki/Data_structure_alignment">see also</a></p>
 
@@ -130,15 +130,15 @@ uint8_t c1 = '*'
 
 struct dstru_struct *ds1;
 
-dstru_add_member(DYN_S_UINT32, (void *) &amp;i1, ds1);
-dstru_add_member(DYN_S_DOUBLE, (void *) &amp;d, ds1);
-dstru_add_member(DYN_S_UINT8, (void *) &amp;c1, ds1);
+dstru_add_uint32(DYN_S_UINT32, (void *) &amp;i1, ds1);
+dstru_add_double(DYN_S_DOUBLE, (void *) &amp;d, ds1);
+dstru_add_uint8(DYN_S_UINT8, (void *) &amp;c1, ds1);
 dstru_finalize(ds1) == 0;
 </code></pre>
 
 <p>ds1 contains a member named "buffer", which is just a memory field.
-This field now contains the exact same as the initialized 
-structure s in our first example including both padding byte sections.</p>
+This field now contains the exact same data as the initialized 
+structure s in our first example, including both padding byte sections.</p>
 
 <h2>
 <a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h2>
