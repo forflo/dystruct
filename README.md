@@ -9,7 +9,40 @@ C-Structures at runtime.
 If you, for example, don't know which kinds of structures you have to pass to a
 dynamically called function (with libffi), you'll have to build them on the heap at runtime. This
 library does just that while taking care of the correct alignment requirements of the 
-members. 
+members.
+
+Use case
+--------
+As an use case example, consider the following code:
+
+    struct flat {
+        int a;
+        double b;
+        char c;
+    };
+    
+    [...]
+    
+    int do_sth(void){
+        struct flat *s = malloc(sizeof(struct flat));
+        s->a = 42;
+        s->b = 424242.424242
+        s->c = '*';
+        
+        return 0;
+    }
+
+The structure to which s points now lays on the heap and
+looks like this:
+
+    Offset: 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 
+    --------+-----------+-----------+-----------------------+
+            |    42     |  padding  |    424242.424242      |
+    --------+-----------+-----------+-----------------------+
+    Offset: 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33
+    --------+--+--------+-----------+
+            |* |     padding        |
+    --------+--+--------+-----------+
 
 Configuration
 -------------
