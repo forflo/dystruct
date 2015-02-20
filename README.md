@@ -99,7 +99,7 @@ With it, the code above could be rewritten as follows:
     
 ds1 contains a member named "buffer", which is just a memory field.
 This field now contains the exact same as the initialized 
-structure s in our first example.
+structure s in our first example including both padding byte sections.
 
 Configuration
 -------------
