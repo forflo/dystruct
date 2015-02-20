@@ -109,63 +109,6 @@ int dstru_finalize(struct dstru_struct *dest){
 	return 0;
 }
 
-int dstru_add_bytefield(int size, void *content, struct dstru_struct *dest){
-	int i;
-
-	if (!dstru_is_power_of_two(dest->align) 
-		&& (dest->align != 0) 
-		|| dest == NULL 
-		|| content == NULL)
-		return 1;	
-
-	for (i = 0; i < size; i++)
-		dstru_add_member(DYN_S_UINT8, (uint8_t *) content + i, dest);
-
-	return 0;
-}
-
-int dstru_add_array(int num, int arr_member_type, 
-		void *content, struct dstru_struct *dest){
-	int i;
-
-	if (!dstru_is_power_of_two(dest->align) 
-		&& (dest->align != 0) 
-		|| dest == NULL 
-		|| content == NULL)
-		return 1;	
-
-	for (i = 0; i < num; i++){
-		switch(arr_member_type){
-			case DYN_S_UINT8:
-				return dstru_add_member(arr_member_type, 
-							(uint8_t *) content + i, dest);
-			case DYN_S_UINT16:
-				return dstru_add_member(arr_member_type, 
-							(uint16_t *) content + i, dest);
-			case DYN_S_UINT32:
-				return dstru_add_member(arr_member_type, 
-							(uint32_t *) content + i, dest);
-			case DYN_S_UINT64:
-				return dstru_add_member(arr_member_type, 
-							(uint64_t *) content + i, dest);
-			case DYN_S_FLOAT:
-				return dstru_add_member(arr_member_type, 
-							(float *) content + i, dest);
-			case DYN_S_DOUBLE:
-				return dstru_add_member(arr_member_type, 
-							(double *) content + i, dest);
-			case DYN_S_VOIDP:
-				return 1;
-			case DYN_S_STRUCT:
-				return 1;
-			default : 
-				return 1;
-		}
-	}
-
-	return 0;
-}
-
 int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 	int pad_size, new_size;
 	uint8_t *tempv, *tempp;
@@ -245,6 +188,63 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 	}	
 	return 0;
 } 
+
+int dstru_add_bytefield(int size, void *content, struct dstru_struct *dest){
+	int i;
+
+	if (!dstru_is_power_of_two(dest->align) 
+		&& (dest->align != 0) 
+		|| dest == NULL 
+		|| content == NULL)
+		return 1;	
+
+	for (i = 0; i < size; i++)
+		dstru_add_member(DYN_S_UINT8, (uint8_t *) content + i, dest);
+
+	return 0;
+}
+
+int dstru_add_array(int num, int arr_member_type, 
+		void *content, struct dstru_struct *dest){
+	int i;
+
+	if (!dstru_is_power_of_two(dest->align) 
+		&& (dest->align != 0) 
+		|| dest == NULL 
+		|| content == NULL)
+		return 1;	
+
+	for (i = 0; i < num; i++){
+		switch(arr_member_type){
+			case DYN_S_UINT8:
+				return dstru_add_member(arr_member_type, 
+							(uint8_t *) content + i, dest);
+			case DYN_S_UINT16:
+				return dstru_add_member(arr_member_type, 
+							(uint16_t *) content + i, dest);
+			case DYN_S_UINT32:
+				return dstru_add_member(arr_member_type, 
+							(uint32_t *) content + i, dest);
+			case DYN_S_UINT64:
+				return dstru_add_member(arr_member_type, 
+							(uint64_t *) content + i, dest);
+			case DYN_S_FLOAT:
+				return dstru_add_member(arr_member_type, 
+							(float *) content + i, dest);
+			case DYN_S_DOUBLE:
+				return dstru_add_member(arr_member_type, 
+							(double *) content + i, dest);
+			case DYN_S_VOIDP:
+				return 1;
+			case DYN_S_STRUCT:
+				return 1;
+			default : 
+				return 1;
+		}
+	}
+
+	return 0;
+}
 
 int dstru_add_uint16(uint16_t i, struct dstru_struct *ds){
 	return dstru_add_member(DYN_S_UINT16, (void *) &i, ds);
