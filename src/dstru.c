@@ -55,7 +55,7 @@ int dstru_padding(int type, struct dstru_struct *s){
 	if (s == NULL || type < 0)
 		return 1;
 
-	/* Full structure packing enabled. No alignment! */
+	/* Full structure packing enabled. No alignment padding! */
 	if(s->align == 1){
 		return 0; 
 	} else if (s->align >= 1){
@@ -63,39 +63,43 @@ int dstru_padding(int type, struct dstru_struct *s){
 	/* No packing. Alignment follows the DYN_S_AL_* defines*/
 	} else {
 		switch(type){
-			case DYN_S_UINT8: return  0;
+			case DYN_S_UINT8: 
+				return 0;
 			case DYN_S_STRUCT:
 			case DYN_S_UINT16:
-				return   (DYN_S_AL_UINT16 - (s->size % DYN_S_AL_UINT16)) % 
+				return   (DYN_S_AL_UINT16 - (s->size % DYN_S_AL_UINT16)) %
 				DYN_S_AL_UINT16;
 			case DYN_S_UINT32:
-				return   (DYN_S_AL_UINT32 - (s->size % DYN_S_AL_UINT32)) % 
+				return   (DYN_S_AL_UINT32 - (s->size % DYN_S_AL_UINT32)) %
 				DYN_S_AL_UINT32;
 			case DYN_S_UINT64:
-				return   (DYN_S_AL_UINT64 - (s->size % DYN_S_AL_UINT64)) % 
+				return   (DYN_S_AL_UINT64 - (s->size % DYN_S_AL_UINT64)) %
 				DYN_S_AL_UINT64;
 			case DYN_S_FLOAT:
-				return   (DYN_S_AL_FLOAT - (s->size % DYN_S_AL_FLOAT)) % 
+				return   (DYN_S_AL_FLOAT - (s->size % DYN_S_AL_FLOAT)) %
 				DYN_S_AL_FLOAT;
 			case DYN_S_DOUBLE:
-				return   (DYN_S_AL_DOUBLE - (s->size % DYN_S_AL_DOUBLE)) % 
+				return   (DYN_S_AL_DOUBLE - (s->size % DYN_S_AL_DOUBLE)) %
 				DYN_S_AL_DOUBLE;
 			case DYN_S_VOIDP:
-				return   (DYN_S_AL_VOIDP - (s->size % DYN_S_AL_VOIDP)) % 
+				return   (DYN_S_AL_VOIDP - (s->size % DYN_S_AL_VOIDP)) %
 				DYN_S_AL_VOIDP;
-			default : return -1;
+			default: 
+				return 0;
 		}	
 	}
 }
 
 int dstru_finalize(struct dstru_struct *dest){
 	int new_size;
-	if ((!dstru_is_power_of_two(dest->align) 
-			&& (dest->align != 0)) || dest == NULL)
+	if (!dstru_is_power_of_two(dest->align) 
+		&& (dest->align != 0)
+		|| dest == NULL)
 		return 1;
 
+	/* biggest_member alignment cannot be bigger than 8 */
 	if (dest->biggest_member > 8){
-;	
+		return 1;
 	} else {
 		new_size = dest->size + 
 			dstru_padding(dstru_lookup_type(dest->biggest_member), dest);
@@ -103,6 +107,7 @@ int dstru_finalize(struct dstru_struct *dest){
 
 	dest->size = new_size;
 	dest->buffer = realloc(dest->buffer, new_size);
+
 	if(dest->buffer == NULL)
 		return 1;
 	
@@ -121,7 +126,10 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 		return 1;	
 
 	/* element adding logic begins here */
-	new_size = dest->size + dstru_padding(type, dest) + dstru_sizeof(type, content);
+	new_size = dest->size + 
+				dstru_padding(type, dest) + 
+				dstru_sizeof(type, content);
+
 	pad_size = new_size - dstru_sizeof(type, content);
 
 	dest->buffer = realloc(dest->buffer, new_size);
@@ -193,7 +201,8 @@ int dstru_add_member(int type, void *content, struct dstru_struct *dest){
 			break;
 		default:
 			return 1;
-	}	
+	}
+
 	return 0;
 } 
 
@@ -216,6 +225,8 @@ int dstru_add_array(int num, int arr_member_type,
 		void *content, struct dstru_struct *dest){
 	int i;
 
+	printf("num: %d, arr_member_type: %d", num, arr_member_type);
+
 	if (!dstru_is_power_of_two(dest->align) 
 		&& (dest->align != 0) 
 		|| dest == NULL 
@@ -225,23 +236,41 @@ int dstru_add_array(int num, int arr_member_type,
 	for (i = 0; i < num; i++){
 		switch(arr_member_type){
 			case DYN_S_UINT8:
-				return dstru_add_member(arr_member_type, 
-							(uint8_t *) content + i, dest);
+				if (dstru_add_member(arr_member_type, 
+							(uint8_t *) content + i, dest))
+					return 1;
+
+				break;
 			case DYN_S_UINT16:
-				return dstru_add_member(arr_member_type, 
-							(uint16_t *) content + i, dest);
+				if (dstru_add_member(arr_member_type, 
+							(uint16_t *) content + i, dest))
+					return 1;
+
+				break;
 			case DYN_S_UINT32:
-				return dstru_add_member(arr_member_type, 
-							(uint32_t *) content + i, dest);
+				if (dstru_add_member(arr_member_type, 
+							(uint32_t *) content + i, dest))
+					return 1;
+
+				break;
 			case DYN_S_UINT64:
-				return dstru_add_member(arr_member_type, 
-							(uint64_t *) content + i, dest);
+				if (dstru_add_member(arr_member_type, 
+							(uint64_t *) content + i, dest))
+					return 1;
+
+				break;
 			case DYN_S_FLOAT:
-				return dstru_add_member(arr_member_type, 
-							(float *) content + i, dest);
+				if (dstru_add_member(arr_member_type, 
+							(float *) content + i, dest))
+					return 1;
+
+				break;
 			case DYN_S_DOUBLE:
-				return dstru_add_member(arr_member_type, 
-							(double *) content + i, dest);
+				if (dstru_add_member(arr_member_type, 
+							(double *) content + i, dest))
+					return 1;
+
+				break;
 			case DYN_S_VOIDP:
 				return 1;
 			case DYN_S_STRUCT:
@@ -280,10 +309,6 @@ int dstru_add_voidp(void *i, struct dstru_struct *ds){
 
 int dstru_add_long(uint64_t i, struct dstru_struct *ds){
 	return dstru_add_member(DYN_S_UINT64, (long *) &i, ds);	
-}
-
-int dstru_add_bitfield(struct dstru_struct *source, struct dstru_struct *dest){
-	return dstru_add_member(DYN_S_STRUCT, source, dest);
 }
 
 int dstru_init(int align, struct dstru_struct **s){

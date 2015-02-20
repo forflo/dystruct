@@ -54,7 +54,11 @@ int dstru_add_uint64(uint64_t i, struct dstru_struct *ds);
 int dstru_add_float(float i, struct dstru_struct *ds);
 int dstru_add_double(double i, struct dstru_struct *ds);
 int dstru_add_voidp(void *i, struct dstru_struct *ds);
+/* Will add size-bytes to dest, which are read from *content 
+ 	Notice, that the added bytes will be aligned to 0 bytes constraint */
 int dstru_add_bytefield(int size, void *content, struct dstru_struct *dest);
+/* Will add elem_num times sizeof(arr_elem_type) bytes big chunks of data
+ 	read from *content to the buffer of *dest */
 int dstru_add_array(int elem_num, int arr_elem_type, void *content, struct dstru_struct *dest);
 
 /* Returns a newly initialized dstru_struct object 

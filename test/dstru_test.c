@@ -224,6 +224,7 @@ void test_creation_nested(void){
 void test_creation_nested_2(void){
 	int cnt;
 	struct dstru_struct *dest;
+	struct nested_2 *result;
 
 	/* Future member values */
 	uint32_t i1 = 42, i2 = 100;
@@ -248,7 +249,26 @@ void test_creation_nested_2(void){
 	CU_ASSERT(dstru_add_member(DYN_S_UINT16, (void *) &s2, dest) == 0);
 	CU_ASSERT(dstru_add_member(DYN_S_DOUBLE, (void *) &d1, dest) == 0);
 
-	///CU_ASSERT(dstru_add_member(DYN_
+	CU_ASSERT(dstru_add_bytefield(32, (void *) foo1, dest) == 0);
+	CU_ASSERT(dstru_add_array(4, DYN_S_UINT32, (void *) foo2, dest) == 0);
+
+	CU_ASSERT(dstru_finalize(dest) == 0);
+
+	result = (struct nested_2 *) dest->buffer;
+
+	CU_ASSERT(result->anon1.a == i1);
+	CU_ASSERT(result->anon1.b == i2);
+	CU_ASSERT(result->anon1.c == s1);
+
+	CU_ASSERT(result->anon2.d1 == d1);
+	CU_ASSERT(result->anon2.s == s2);
+	CU_ASSERT(result->anon2.d2 == d1);
+
+	CU_ASSERT(memcmp(result->anon3.string, foo1, 32) == 0);
+	for (cnt = 0; cnt < 4; cnt++)
+		CU_ASSERT(result->anon3.arr[cnt] == cnt + 42);
+
+	CU_ASSERT(dest->size == sizeof(struct nested_2));
 }
 
 void test_sizeof(void){
@@ -347,7 +367,7 @@ int main(int argc, char **argv){
 		return CU_get_error();
 	}
 
-	/* Adds tests */
+	/* Add tests */
 	if((NULL == CU_add_test(pSuite, "Creation of structs", test_init)) || 
 		(NULL == CU_add_test(pSuite, "Voidpointer test", test_voidp)) || 
 		(NULL == CU_add_test(pSuite, "Sizeof test", test_sizeof)) ||
@@ -359,6 +379,9 @@ int main(int argc, char **argv){
 		(NULL == CU_add_test(pSuite,
 				"Member adding test with nested structs",
 				test_creation_nested)) ||
+		(NULL == CU_add_test(pSuite, 
+				"Second member adding test with nested structs", 
+				test_creation_nested_2)) ||
 		(NULL == CU_add_test(pSuite, 
 				"Padding test with alignment", 
 				test_padding_aligned)) ||
