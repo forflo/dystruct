@@ -280,7 +280,7 @@ int dstru_add_bitfield(struct dstru_struct *source, struct dstru_struct *dest){
 
 int dstru_init(int align, struct dstru_struct **s){
 	struct dstru_struct *ret = malloc(sizeof(struct dstru_struct));
-	if (ret == NULL || align < 0 || (!dstru_is_power_of_two(align) && align != 0))
+	if (ret == NULL || align < 0 || !dstru_is_power_of_two(align) && align != 0)
 		return 1;
 
 	ret->buffer = NULL;
