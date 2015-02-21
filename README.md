@@ -169,5 +169,5 @@ Porting
 =======
 The main porting adjustments are intended to be made in the file
 include/dstru_defines.h. If you've successfully ported the library
-to your platform, please send a patch or a personal message. 
+to your platform, please send a patch, a pull request or a personal message. 
 I'd then like to include your contribution in the upstream.
