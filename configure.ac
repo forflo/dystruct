@@ -1,8 +1,10 @@
+dnl Autotools init makro invocations
 AC_PREREQ(2.69)
-
-dnl initialize systems
 AC_INIT([dynstruct], [0.3], [mayerflorian@me.com])
+
+dnl Libtool init makro invocations
 LT_INIT
+LT_PREREQ([2.2])
 
 dnl Automake makro invocations
 AM_INIT_AUTOMAKE([silent-rules])
