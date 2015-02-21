@@ -21,6 +21,8 @@ libtool
 Makefile
 autoscan.log
 *.o
+*.la
+*.lo
 *.a
 *.log
 *.trs

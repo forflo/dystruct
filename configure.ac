@@ -30,7 +30,8 @@ AC_PROG_AWK
 AC_PROG_CXX
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
+dnl only needed if we build without libtool
+dnl AC_PROG_RANLIB
 
 dnl check libraries
 AC_SEARCH_LIBS([CU_initialize_registry], 
@@ -143,6 +144,7 @@ AC_CONFIG_HEADERS([config/config.h])
 dnl specifies the .in Files to process 
 AC_CONFIG_FILES([Makefile:Makefile.in
 	src/Makefile:src/Makefile.in
+	include/Makefile:include/Makefile.in
 	test/Makefile:test/Makefile.in
 	])
 

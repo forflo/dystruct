@@ -1,4 +1,4 @@
-SUBDIRS = src test
+SUBDIRS = src include test
 
 TESTS = test/dstrutest
 
