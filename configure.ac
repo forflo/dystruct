@@ -23,6 +23,14 @@ CUNIT_BASIC_NOTF="
 	Please install the dev package of cunit.
 "
 
+CUNIT_LIB_NOTF="
+	The unit testing framework cunit
+	could not be found! Please
+	install it before you build this
+	project. If you don't the
+	make check rule won't work!
+"
+
 dnl checks for programs
 AC_PROG_CC
 AC_PROG_INSTALL
@@ -40,12 +48,7 @@ AC_SEARCH_LIBS([CU_initialize_registry],
 	[have_lib_cunit=no])
 
 if test "x${have_lib_cunit}" = xno; then
-	AC_MSG_ERROR([
-	The unit testing framework cunit
-	could not be found! Please do
-	install it before you build this
-	project.
-	], [1])
+	AC_MSG_WARN([$CUNIT_LIB_NOTF], [1])
 fi
 
 dnl check headers
@@ -63,13 +66,13 @@ AC_CHECK_HEADER([CUnit/Cunit.h],
 
 if test "x${have_cunit_k1}" = xno; then
 	if test "x${have_cunit_k2}" = xno; then
-		AC_MSG_ERROR([$CUNIT_NOTF], [1])
+		AC_MSG_WARN([$CUNIT_NOTF], [1])
 	fi
 fi
 
 AC_CHECK_HEADER([CUnit/Basic.h],
 	[AC_DEFINE([CUNIT_BASIC], [1], [CUnit/Basic.h])],
-	[AC_MSG_ERROR([$CUNIT_BASIC_NOTF], [1])])
+	[AC_MSG_WARN([$CUNIT_BASIC_NOTF], [1])])
 
 dnl Adds various commandline options
 dnl to the resulting configure script
