@@ -46,7 +46,7 @@ library does just that while taking care of the correct alignment requirements o
 members.</p>
 
 <h2>
-<a id="use-case" class="anchor" href="#use-case" aria-hidden="true"><span class="octicon octicon-link"></span></a>Use case</h2>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
 <p>As an use case example, consider the following code:</p>
 
@@ -141,6 +141,18 @@ This field now contains the exact same data as the initialized
 structure s in our first example, including both padding byte sections.</p>
 
 <h2>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<p>You should have installed the unit testing framework Cunit, which
+the test suite will need to build correctly. However, it is possible
+to build the library without the test, although make will then end 
+with an error code because of the lack of cunit. </p>
+
+<p>On Mac OS X and some Linux distros, the filename of the Cunit main
+header slightly differs. But don't worry! The buildsystem takes care
+of this inconvenience for you.</p>
+
+<h2>
 <a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h2>
 
 <p>The configure script provides the following additional
@@ -172,10 +184,10 @@ $ make install
 </code></pre>
 
 <h1>
-<a id="build-system" class="anchor" href="#build-system" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build system</h1>
+<a id="development" class="anchor" href="#development" aria-hidden="true"><span class="octicon octicon-link"></span></a>Development</h1>
 
 <h2>
-<a id="development" class="anchor" href="#development" aria-hidden="true"><span class="octicon octicon-link"></span></a>Development</h2>
+<a id="build-system" class="anchor" href="#build-system" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build system</h2>
 
 <p>After a fresh checkout of the repository, just execute the following command:</p>
 
@@ -196,6 +208,20 @@ as follows:</p>
 
 <p>While this does not completely silence the build, most of the commands executed by make rules
 won't be shown anymore. Make will still output cd messages, though.</p>
+
+<h2>
+<a id="bugs" class="anchor" href="#bugs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Bugs</h2>
+
+<p>If you find a bug, please report it to the maintenance 
+mail address (see ChangeLog), or submit an issue here on github.</p>
+
+<h2>
+<a id="porting" class="anchor" href="#porting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Porting</h2>
+
+<p>The main porting adjustments are intended to be made in the file
+include/dstru_defines.h. If you've successfully ported the library
+to your platform, please send a patch, a pull request or a personal message. 
+I'd then like to include your contribution in the upstream.</p>
       </section>
     </div>
 
