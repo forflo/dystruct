@@ -101,6 +101,17 @@ ds1 contains a member named "buffer", which is just a memory field.
 This field now contains the exact same data as the initialized 
 structure s in our first example, including both padding byte sections.
 
+Dependencies
+------------
+You should have installed the unit testing framework Cunit, which
+the test suite will need to build correctly. However, it is possible
+to build the library without the test, although make will then end 
+with an error code because of the lack of cunit. 
+
+On Mac OS X and some Linux distros, the filename of the Cunit main
+header slightly differs. But don't worry! The buildsystem takes care
+of this inconvenience for you.
+
 Configuration
 -------------
 The configure script provides the following additional
@@ -148,3 +159,15 @@ as follows:
 
 While this does not completely silence the build, most of the commands executed by make rules
 won't be shown anymore. Make will still output cd messages, though.
+
+Bugs
+====
+If you find a bug, please report it to the maintenance 
+mail address (see ChangeLog), or submit an issue here on github.
+
+Porting
+=======
+The main porting adjustments are intended to be made in the file
+include/dstru_defines.h. If you've successfully ported the library
+to your platform, please send a patch or a personal message. 
+I'd then like to include your contribution in the upstream.
