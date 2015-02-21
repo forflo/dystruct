@@ -14,7 +14,11 @@ missing
 test-driver
 .deps
 .*
-config*
+config.sub
+config.guess
+config.status
+configure.scan
+config.h
 ltmain.sh
 stamp-h1
 libtool
