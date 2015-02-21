@@ -138,10 +138,10 @@ Just use these commands:
     $ make && make check
     $ make install
 
-Build system
+Development
 ============
 
-Development
+Build system
 -----------
 After a fresh checkout of the repository, just execute the following command:
 
@@ -161,12 +161,12 @@ While this does not completely silence the build, most of the commands executed 
 won't be shown anymore. Make will still output cd messages, though.
 
 Bugs
-====
+----
 If you find a bug, please report it to the maintenance 
 mail address (see ChangeLog), or submit an issue here on github.
 
 Porting
-=======
+-------
 The main porting adjustments are intended to be made in the file
 include/dstru_defines.h. If you've successfully ported the library
 to your platform, please send a patch or a personal message. 
