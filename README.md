@@ -11,8 +11,8 @@ dynamically called function (with libffi), you'll have to build them on the heap
 library does just that while taking care of the correct alignment requirements of the 
 members.
 
-Use case
---------
+Introduction
+------------
 As an use case example, consider the following code:
 
     struct flat {
