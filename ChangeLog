@@ -14,3 +14,5 @@
 2015-2-20 Florian Mayer <mayerflorian@me.com>
 * Two convenience functions for adding arrays and bytefields
 * Github.io Page (forflo.github.io/dystruct)
+2015-2-21 Florian Mayer <mayerflorian@me.com>
+* Added libtool shared library builds
